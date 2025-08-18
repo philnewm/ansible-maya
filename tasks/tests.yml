@@ -1,3 +1,7 @@
 ---
 
+- name: Nothing yet
+  ansible.builtin.debug:
+    msg: "Nothing to test yet"
+
 ...

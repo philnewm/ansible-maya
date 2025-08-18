@@ -1,7 +1,10 @@
 ---
 
-# INFO This task may be osbolete for your use-case
-- name: Gather package facts
-  ansible.builtin.package_facts:
+- name: Install dependencies
+  become: true
+  when: item not in ansible_facts.packages
+  loop: "{{ maya_dependencies }}"
+  ansible.builtin.package:
+    name: "{{ item }}"
 
 ...

@@ -1,5 +1,44 @@
 ---
 
-ansible_role_template: "Default role name still in use."
+maya_dependencies:
+  - mesa-libGL
+  - libglvnd-opengl
+  - freetype
+  - libxkbcommon
+  - mesa-libGLU
+  - libtiff
+  - fontconfig
+  - libXinerama
+  - libXmu
+  - libXpm
+  - libXi
+  - mesa-libEGL
+  - dbus-libs
+  - nss
+  - libXcomposite
+  - libXdamage
+  - libXrender
+  - libXrandr
+  - libXtst
+  - pciutils-libs
+  - alsa-lib
+  - libxkbfile
+  - libpng
+  # INFO adsklicensing only
+  # - libnsl
+  - compat-openssl11
+  - pcre2-utf16
+  - xcb-util-cursor
+  - xcb-util-wm
+  - xcb-util-image
+  - xcb-util-keysyms
+  - xcb-util-renderutil
+  # INFO licesense UI runs `xdg-settings get default-web-browser` to detect default browser
+  - xdg-utils
+  # UI requires old fonts
+  - xorg-x11-fonts-ISO8859-1-75dpi
+  - xorg-x11-fonts-ISO8859-1-100dpi
+
+# autodesk depedency ref https://help.autodesk.com/view/MAYAUL/2025/ENU/?guid=GUID-D2B5433C-E0D2-421B-9BD8-24FED217FD7F
 
 ...

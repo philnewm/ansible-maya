@@ -1,5 +1,29 @@
 ---
 
 state: present
+maya_version: "2025.3.1"
+maya_tmp_package_dir: "/tmp/maya_{{ maya_version }}_packages"
+maya_installers:
+  "2025.3.1":
+    - name: setup
+      url: https://efulfillment.autodesk.com/NetSWDLD/prd/2025/MAYA/E33820FB-8D0C-353A-935B-07E239F12D09//Autodesk_Maya_2025_3_1_ML_Linux_64bit.tgz
+    - name: licensing
+      url: https://up1.autodesk.com/NetSWCOM/prd/2026/PLC0000036/5DD68EF7-2F7F-3498-BDC2-5C80B2769757//AdskLicensingInstaller-15.6.0.13599.tar.gz
+  "2026.2":
+    - name: setup
+      url: https://efulfillment.autodesk.com/NetSWDLD/prd/2026/MAYA/901073B8-F0A1-3952-A459-9CA36A875C41//Autodesk_Maya_2026_2_Update_Linux_64bit.tgz
+
+maya_packages:
+  "2025.3.1":
+    - "adsklicensinginstaller/adskidentitymanager1.15.3.5-1"  # dependency of adsklicensing
+    - "adsklicensinginstaller/adsklicensing15.6.0.13599-0-0"
+    - "adsklicensinginstaller/adskflexnetclient-11.18.3-1"
+    - "adsklicensinginstaller/adlmapps34-34.0.2-0"
+    - "Licensing/adskflexnetserverIPV6-11.19.4-1"
+    - "Maya2025_64-2025.3"
+  # - "AdobeSubstance3DforMaya"
+  # - "Bifrost{{ maya_version }}"
+  # - "LookdevX"
+  # - "MayaUSD{{ maya_version }}"
 
 ...

@@ -7,8 +7,70 @@
     name: python-apt-common
     state: present
 
-# INFO This task may be obsolete for your use-case
 - name: Gather package facts
   ansible.builtin.package_facts:
+
+- name: Include dependencies
+  ansible.builtin.include_tasks:
+    file: dependencies.yml
+
+- name: Create temporary installer path
+  become: true
+  ansible.builtin.file:
+    path: "{{ maya_tmp_package_dir }}"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+# TODO enable retries in case of download failure
+- name: Get and extract installer
+  become: true
+  loop: "{{ maya_installers[maya_version] }}"
+  loop_control:
+    loop_var: installer
+    label: "{{ installer.name }}"
+  ansible.builtin.unarchive:
+    src: "{{ installer.url }}"
+    dest: "{{ maya_tmp_package_dir }}"
+    remote_src: true
+    owner: "root"
+    group: "root"
+    mode: "0755"
+    creates: "{{ maya_tmp_package_dir }}/adsklicensinginstaller"
+  register: unarchive_result
+  until: unarchive_result is succeeded
+  retries: 3
+  delay: 2
+
+- name: Find matching RPM on remote host
+  ansible.builtin.find:
+    paths: "{{ maya_tmp_package_dir }}"
+    patterns: "*.rpm"
+    recurse: true
+  register: found_rpms
+
+- name: Filter RPMs preserving order
+  ansible.builtin.set_fact:
+    filtered_rpm_paths: []
+
+- name: Build ordered RPM list
+  loop: "{{ maya_packages[maya_version] }}"
+  loop_control:
+    loop_var: pkg
+  ansible.builtin.set_fact:
+    filtered_rpm_paths: "{{ filtered_rpm_paths + [found_rpms.files | selectattr('path', 'search', pkg) | map(attribute='path') | first] }}"
+
+- name: Display install rpms
+  ansible.builtin.debug:
+    var: filtered_rpm_paths
+
+- name: Install packages
+  become: true
+  loop: "{{ filtered_rpm_paths }}"
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: "present"
+    disable_gpg_check: true
 
 ...
