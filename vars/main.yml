@@ -24,8 +24,11 @@ maya_dependencies:
   - alsa-lib
   - libxkbfile
   - libpng
-  # INFO adsklicensing only
-  # - libnsl
+  # UI requires old fonts
+  - xorg-x11-fonts-ISO8859-1-75dpi
+  - xorg-x11-fonts-ISO8859-1-100dpi
+
+adsk_licensing_dependencies:
   - compat-openssl11
   - pcre2-utf16
   - xcb-util-cursor
@@ -35,9 +38,6 @@ maya_dependencies:
   - xcb-util-renderutil
   # INFO licesense UI runs `xdg-settings get default-web-browser` to detect default browser
   - xdg-utils
-  # UI requires old fonts
-  - xorg-x11-fonts-ISO8859-1-75dpi
-  - xorg-x11-fonts-ISO8859-1-100dpi
 
 # autodesk depedency ref https://help.autodesk.com/view/MAYAUL/2025/ENU/?guid=GUID-D2B5433C-E0D2-421B-9BD8-24FED217FD7F
 

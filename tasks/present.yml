@@ -10,74 +10,78 @@
 - name: Gather package facts
   ansible.builtin.package_facts:
 
-- name: Include dependencies
+- name: Include license manager
   ansible.builtin.include_tasks:
-    file: dependencies.yml
+    file: license_manager.yml
 
-- name: Create temporary installer path
-  become: true
-  ansible.builtin.file:
-    path: "{{ maya_tmp_package_dir }}"
-    state: "directory"
-    owner: "root"
-    group: "root"
-    mode: "0755"
+# - name: Include dependencies
+#   ansible.builtin.include_tasks:
+#     file: dependencies.yml
 
-# TODO test if sparated install routine for license manager makes sense
-# TODO test to only use latest license manager version
+# - name: Create temporary installer path
+#   become: true
+#   ansible.builtin.file:
+#     path: "{{ maya_tmp_package_dir }}"
+#     state: "directory"
+#     owner: "root"
+#     group: "root"
+#     mode: "0755"
 
-- name: Get and extract installer
-  become: true
-  loop: "{{ maya_installers[maya_version] }}"
-  loop_control:
-    loop_var: installer
-    label: "{{ installer.name }}"
-  ansible.builtin.unarchive:
-    src: "{{ installer.url }}"
-    dest: "{{ maya_tmp_package_dir }}"
-    remote_src: true
-    owner: "root"
-    group: "root"
-    mode: "0755"
-    creates: "{{ maya_tmp_package_dir }}/adsklicensinginstaller"
-  register: unarchive_result
-  until: unarchive_result is succeeded
-  retries: 3
-  delay: 3
+# # TODO test if sparated install routine for license manager makes sense
+# # TODO test to only use latest license manager version
 
-- name: Find RPM on remote host
-  ansible.builtin.find:
-    paths: "{{ maya_tmp_package_dir }}"
-    patterns: "*.rpm"
-    recurse: true
-  register: found_rpms
+# - name: Get and extract installer
+#   become: true
+#   loop: "{{ maya_installers[maya_version] }}"
+#   loop_control:
+#     loop_var: installer
+#     label: "{{ installer.name }}"
+#   ansible.builtin.unarchive:
+#     src: "{{ installer.url }}"
+#     dest: "{{ maya_tmp_package_dir }}"
+#     remote_src: true
+#     owner: "root"
+#     group: "root"
+#     mode: "0755"
+#     creates: "{{ maya_tmp_package_dir }}/adsklicensinginstaller"
+#   register: unarchive_result
+#   until: unarchive_result is succeeded
+#   retries: 3
+#   delay: 3
 
-- name: Filter RPMs preserving order
-  ansible.builtin.set_fact:
-    filtered_rpm_paths: []
+# - name: Find RPM on remote host
+#   ansible.builtin.find:
+#     paths: "{{ maya_tmp_package_dir }}"
+#     patterns: "*.rpm"
+#     recurse: true
+#   register: found_rpms
 
-- name: Build ordered RPM list
-  loop: "{{ maya_features }}"
-  loop_control:
-    loop_var: pkg
-  ansible.builtin.set_fact:
-    filtered_rpm_paths: >-
-      {{ filtered_rpm_paths
-        + [ found_rpms.files
-            | selectattr('path', 'search', maya_packages[maya_version][pkg])
-            | map(attribute='path')
-            | first ] }}
+# - name: Filter RPMs preserving order
+#   ansible.builtin.set_fact:
+#     filtered_rpm_paths: []
 
-- name: Display install rpms
-  ansible.builtin.debug:
-    var: filtered_rpm_paths
+# - name: Build ordered RPM list
+#   loop: "{{ maya_features }}"
+#   loop_control:
+#     loop_var: pkg
+#   ansible.builtin.set_fact:
+#     filtered_rpm_paths: >-
+#       {{ filtered_rpm_paths
+#         + [ found_rpms.files
+#             | selectattr('path', 'search', maya_packages[maya_version][pkg])
+#             | map(attribute='path')
+#             | first ] }}
 
-- name: Install packages
-  become: true
-  loop: "{{ filtered_rpm_paths }}"
-  ansible.builtin.dnf:
-    name: "{{ item }}"
-    state: "present"
-    disable_gpg_check: true
+# - name: Display install rpms
+#   ansible.builtin.debug:
+#     var: filtered_rpm_paths
+
+# - name: Install packages
+#   become: true
+#   loop: "{{ filtered_rpm_paths }}"
+#   ansible.builtin.dnf:
+#     name: "{{ item }}"
+#     state: "present"
+#     disable_gpg_check: true
 
 ...

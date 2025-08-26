@@ -1,0 +1,78 @@
+---
+
+- name: Install dependencies
+  become: true
+  when: dependency not in ansible_facts.packages
+  loop: "{{ adsk_licensing_dependencies }}"
+  loop_control:
+    loop_var: dependency
+  ansible.builtin.package:
+    name: "{{ dependency }}"
+
+- name: Create temporary installer dir
+  become: true
+  ansible.builtin.file:
+    path: "{{ adsk_license_tmp_package_dir }}"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: Get and extract installer
+  become: true
+  ansible.builtin.unarchive:
+    src: "{{ adsk_license_manager[adsk_license_manager_version] }}"
+    dest: "{{ adsk_license_tmp_package_dir }}"
+    remote_src: true
+    owner: "root"
+    group: "root"
+    mode: "0755"
+    creates: "{{ adsk_license_tmp_package_dir }}/adsklicensinginstaller"
+  register: unarchive_result
+  until: unarchive_result is succeeded
+  retries: 3
+  delay: 3
+
+- name: Find RPM in extracted archive
+  ansible.builtin.find:
+    paths: "{{ adsk_license_tmp_package_dir }}/adsklicensinginstaller"
+    patterns: "*.rpm"
+    recurse: true
+  register: found_rpms
+
+- name: Reduce to paths
+  ansible.builtin.set_fact:
+    package_paths: >
+      {{ found_rpms.files | map(attribute='path') | list }}
+
+- name: Initialize filtered list
+  ansible.builtin.set_fact:
+    filtered_package_paths: []
+
+- name: Append matching paths in license_manager_packages order
+  loop: "{{ license_manager_packages }}"
+  ansible.builtin.set_fact:
+    filtered_package_paths: >-
+      {{
+        filtered_package_paths + (
+          package_paths
+          | zip(package_paths | map('basename'))
+          | selectattr('1', 'search', item)
+          | map('first')
+          | list
+        )
+      }}
+
+- name: Display packages
+  ansible.builtin.debug:
+    var: filtered_package_paths
+
+- name: Install packages
+  become: true
+  loop: "{{ filtered_package_paths }}"
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: "present"
+    disable_gpg_check: true
+
+...

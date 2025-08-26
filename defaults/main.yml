@@ -1,56 +1,64 @@
 ---
 
 state: present
-maya_version: "2025.3.1"
+adsk_license_manager_version: "15.6.0.13599"
+maya_version_major: 2025
+maya_version_minor: 3
+maya_version_patch: 1
 maya_tmp_package_dir: "/tmp/maya_{{ maya_version }}_packages"
-maya_features:
-  - adskidentitymanager
-  - adsklicensing
-  - adskflexnetclient
-  - adlmapps
-  - adskflexnetserver
-  - Maya
+# maya_features:
+#   - adskidentitymanager
+#   - adsklicensing
+#   - adskflexnetclient
+#   - adlmapps
+#   - adskflexnetserver
+#   - Maya
 
-license_manager_url: "https://up1.autodesk.com/NetSWCOM/prd/2026/PLC0000036/5DD68EF7-2F7F-3498-BDC2-5C80B2769757//AdskLicensingInstaller-15.6.0.13599.tar.gz"
+# INFO only supports 2020 product versions and later
+# https://www.autodesk.com/support/technical/article/caas/tsarticles/ts/f5IhBc15i0kOwzBb8lcEN.html
+adsk_license_manager:
+  "15.7.0.13899": "https://damassets.autodesk.net/content/dam/autodesk/external-assets/support-articles/autodesk-licensing-service-download/15-7-0-13899/AdskLicensingInstaller-linux-15.7.0.13899.tar.gz"
+  "15.6.0.13599": "https://up1.autodesk.com/NetSWCOM/prd/2026/PLC0000036/5DD68EF7-2F7F-3498-BDC2-5C80B2769757//AdskLicensingInstaller-15.6.0.13599.tar.gz"
+adsk_license_tmp_package_dir: "/tmp/adsk_licensing_{{ adsk_license_manager_version }}_packages"
 license_manager_packages:
-  "15.6.0.13599":
-    - "adskidentitymanager1.15.3.5-1"  # dependency of adsklicensing
-    - "adsklicensing15.6.0.13599-0-0"
-    - "adskflexnetclient-11.18.3-1"
-    - "adlmapps34-34.0.2-0"
+  - "adskidentitymanager"  # dependency of adsklicensing
+  - "adsklicensing"
+  - "adskflexnetclient"  # dependency of adlmapps
+  - "adlmapps"
 
 maya_installers:
-  "2025.3.1":
-    - name: setup
-      url: https://efulfillment.autodesk.com/NetSWDLD/prd/2025/MAYA/E33820FB-8D0C-353A-935B-07E239F12D09//Autodesk_Maya_2025_3_1_ML_Linux_64bit.tgz
-    - name: licensing
-      url: https://up1.autodesk.com/NetSWCOM/prd/2026/PLC0000036/5DD68EF7-2F7F-3498-BDC2-5C80B2769757//AdskLicensingInstaller-15.6.0.13599.tar.gz
-  "2026.2":
-    - name: setup
-      url: https://efulfillment.autodesk.com/NetSWDLD/prd/2026/MAYA/901073B8-F0A1-3952-A459-9CA36A875C41//Autodesk_Maya_2026_2_Update_Linux_64bit.tgz
+  "2025.3.1": https://efulfillment.autodesk.com/NetSWDLD/prd/2025/MAYA/E33820FB-8D0C-353A-935B-07E239F12D09//Autodesk_Maya_2025_3_1_ML_Linux_64bit.tgz
+  "2026.2.0": "https://efulfillment.autodesk.com/NetSWDLD/prd/2026/MAYA/901073B8-F0A1-3952-A459-9CA36A875C41//Autodesk_Maya_2026_2_Update_Linux_64bit.tgz"
 
 maya_packages:
-  "2025.3.1":
-    "adskidentitymanager": "adsklicensinginstaller/adskidentitymanager1.15.3.5-1"  # dependency of adsklicensing
-    "adsklicensing": "adsklicensinginstaller/adsklicensing15.6.0.13599-0-0"
-    "adskflexnetclient": "adsklicensinginstaller/adskflexnetclient-11.18.3-1"
-    "adlmapps": "adsklicensinginstaller/adlmapps34-34.0.2-0"
-    "adskflexnetserver": "Licensing/adskflexnetserverIPV6-11.19.4-1"
-    "Maya": "Maya2025_64-2025.3-2727"
-    "Substance": "AdobeSubstance3DforMaya-3.0.3-2025"
-    "Bifrost": "Bifrost2025-2.14.0.0-2.14.0.0-1"
-    "LookdevX": "LookdevX-1.6.0-2025.el8"
-    "MayaUSD": "MayaUSD2025-202505060957-eeb3aaa-0.32.0-1"
-  "2026.2":
-    "adskidentitymanager": "Licensing/adskidentitymanager1.14.0.5-1"  # dependency of adsklicensing
-    "adsklicensing": "Licensing/adsklicensing15.1.0.12339-0-0"
-    "adskflexnetclient": "Licensing/adskflexnetclient-11.18.3-1"
-    "adlmapps": "Licensing/adlmapps31-31.0.4-0"
-    "adskflexnetserver": "Licensing/adskflexnetserverIPV6-11.19.4-1"
-    "Maya": "Maya2026_64-2026.2-2565"
-    "Substance": "AdobeSubstance3DforMaya-3.0.4-2026"
-    "Bifrost": "Bifrost2026-2.14.1.0-2.14.1.0-1"
-    "LookdevX": "LookdevX-1.9.0-2026.el8"
-    "MayaUSD": "MayaUSD2026-202507022244-1cbb7f7-0.33.0-1"
+  - "Maya{{ maya_version_major }}_64"
+  - "MayaUSD"
+  - "Bifrost"
+  - "Substance"
+  - "LookdevX"
+
+# maya_packages_old:
+#   "2025.3.1":
+#     "adskidentitymanager": "adsklicensinginstaller/adskidentitymanager1.15.3.5-1"  # dependency of adsklicensing
+#     "adsklicensing": "adsklicensinginstaller/adsklicensing15.6.0.13599-0-0"
+#     "adskflexnetclient": "adsklicensinginstaller/adskflexnetclient-11.18.3-1"
+#     "adlmapps": "adsklicensinginstaller/adlmapps34-34.0.2-0"
+#     "adskflexnetserver": "Licensing/adskflexnetserverIPV6-11.19.4-1"
+#     "Maya": "Maya2025_64-2025.3-2727"
+#     "Substance": "AdobeSubstance3DforMaya-3.0.3-2025"
+#     "Bifrost": "Bifrost2025-2.14.0.0-2.14.0.0-1"
+#     "LookdevX": "LookdevX-1.6.0-2025.el8"
+#     "MayaUSD": "MayaUSD2025-202505060957-eeb3aaa-0.32.0-1"
+#   "2026.2.0":
+#     "adskidentitymanager": "Licensing/adskidentitymanager1.14.0.5-1"  # dependency of adsklicensing
+#     "adsklicensing": "Licensing/adsklicensing15.1.0.12339-0-0"
+#     "adskflexnetclient": "Licensing/adskflexnetclient-11.18.3-1"
+#     "adlmapps": "Licensing/adlmapps31-31.0.4-0"
+#     "adskflexnetserver": "Licensing/adskflexnetserverIPV6-11.19.4-1"
+#     "Maya": "Maya2026_64-2026.2-2565"
+#     "Substance": "AdobeSubstance3DforMaya-3.0.4-2026"
+#     "Bifrost": "Bifrost2026-2.14.1.0-2.14.1.0-1"
+#     "LookdevX": "LookdevX-1.9.0-2026.el8"
+#     "MayaUSD": "MayaUSD2026-202507022244-1cbb7f7-0.33.0-1"
 
 ...
