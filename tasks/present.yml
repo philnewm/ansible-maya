@@ -23,7 +23,9 @@
     group: "root"
     mode: "0755"
 
-# TODO enable retries in case of download failure
+# TODO test if sparated install routine for license manager makes sense
+# TODO test to only use latest license manager version
+
 - name: Get and extract installer
   become: true
   loop: "{{ maya_installers[maya_version] }}"
@@ -41,9 +43,9 @@
   register: unarchive_result
   until: unarchive_result is succeeded
   retries: 3
-  delay: 2
+  delay: 3
 
-- name: Find matching RPM on remote host
+- name: Find RPM on remote host
   ansible.builtin.find:
     paths: "{{ maya_tmp_package_dir }}"
     patterns: "*.rpm"
@@ -55,11 +57,16 @@
     filtered_rpm_paths: []
 
 - name: Build ordered RPM list
-  loop: "{{ maya_packages[maya_version] }}"
+  loop: "{{ maya_features }}"
   loop_control:
     loop_var: pkg
   ansible.builtin.set_fact:
-    filtered_rpm_paths: "{{ filtered_rpm_paths + [found_rpms.files | selectattr('path', 'search', pkg) | map(attribute='path') | first] }}"
+    filtered_rpm_paths: >-
+      {{ filtered_rpm_paths
+        + [ found_rpms.files
+            | selectattr('path', 'search', maya_packages[maya_version][pkg])
+            | map(attribute='path')
+            | first ] }}
 
 - name: Display install rpms
   ansible.builtin.debug:
