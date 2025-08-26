@@ -5,6 +5,7 @@ adsk_license_manager_version: "15.6.0.13599"
 maya_version_major: 2025
 maya_version_minor: 3
 maya_version_patch: 1
+maya_version: "{{ maya_version_major }}.{{ maya_version_minor }}.{{ maya_version_patch }}"
 maya_tmp_package_dir: "/tmp/maya_{{ maya_version }}_packages"
 # maya_features:
 #   - adskidentitymanager
@@ -33,9 +34,9 @@ maya_installers:
 maya_packages:
   - "Maya{{ maya_version_major }}_64"
   - "MayaUSD"
-  - "Bifrost"
-  - "Substance"
-  - "LookdevX"
+  # - "Bifrost"
+  # - "Substance"
+  # - "LookdevX"
 
 # maya_packages_old:
 #   "2025.3.1":
