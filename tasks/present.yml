@@ -10,13 +10,21 @@
 - name: Gather package facts
   ansible.builtin.package_facts:
 
-- name: Include license manager
+- name: Include setup procedure
+  loop: "{{ maya_installers }}"
+  loop_control:
+    loop_var: "installer"
+    label: "{{ installer.name }}"
   ansible.builtin.include_tasks:
-    file: license_manager.yml
+    file: software_setup.yml
 
-- name: Include license manager
-  ansible.builtin.include_tasks:
-    file: maya_install.yml
+# - name: Include license manager
+#   ansible.builtin.include_tasks:
+#     file: license_manager.yml
+
+# - name: Include license manager
+#   ansible.builtin.include_tasks:
+#     file: maya_install.yml
 
 # TODO streamline install files from a list: requires download url, target location and filter list
 
