@@ -1,0 +1,32 @@
+---
+
+- name: Install dependencies
+  become: true
+  when: maya_dependency not in ansible_facts.packages
+  loop: "{{ maya_dependencies[maya_version] | flatten(1) }}"
+  loop_control:
+    loop_var: maya_dependency
+  ansible.builtin.package:
+    name: "{{ maya_dependency }}"
+
+- name: Get packages from xml
+  community.general.xml:
+    path: "{{ maya_package_dir }}/{{ maya_package_sub_dir }}/pkg.maya.xml"
+    xpath: "/_:Package/_:Configuration/_:InstallFile"
+    content: attribute
+    namespaces:
+      _: "{{ xml_namespace }}"
+  register: xml_result
+
+- name: Build package mapping from XML results
+  ansible.builtin.set_fact:
+    maya_package_map: "{{ xml_result.matches[0]['{' ~ xml_result.actions.namespaces._ ~ '}InstallFile'] }}"
+
+- name: Install maya package
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ maya_package_dir }}/{{ maya_package_map.file }}"
+    state: "present"
+    disable_gpg_check: true
+
+...

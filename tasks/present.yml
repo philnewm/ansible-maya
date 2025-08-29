@@ -10,22 +10,31 @@
 - name: Gather package facts
   ansible.builtin.package_facts:
 
+- name: Check for existing maya version
+  ansible.builtin.stat:
+    path: "{{ maya_install_dir }}"
+  register: maya_install_result
+
 - name: Include setup procedure
+  when: not maya_install_result.stat.exists
   loop: "{{ maya_installers }}"
   loop_control:
     loop_var: "installer"
     label: "{{ installer.name }}"
   ansible.builtin.include_tasks:
-    file: software_setup.yml
+    file: get_setups.yml
 
-# - name: Include license manager
-#   ansible.builtin.include_tasks:
-#     file: license_manager.yml
+- name: Include license manager install
+  when: license_manager
+  ansible.builtin.include_tasks:
+    file: adsk_licensing_install.yml
 
-# - name: Include license manager
-#   ansible.builtin.include_tasks:
-#     file: maya_install.yml
+- name: Include maya install
+  ansible.builtin.include_tasks:
+    file: maya_install.yml
 
-# TODO streamline install files from a list: requires download url, target location and filter list
+- name: Include maya install
+  ansible.builtin.include_tasks:
+    file: maya_plugins_install.yml
 
 ...

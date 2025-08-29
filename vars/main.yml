@@ -1,32 +1,39 @@
 ---
 
 maya_dependencies:
-  - mesa-libGL
-  - libglvnd-opengl
-  - freetype
-  - libxkbcommon
-  - mesa-libGLU
-  - libtiff
-  - fontconfig
-  - libXinerama
-  - libXmu
-  - libXpm
-  - libXi
-  - mesa-libEGL
-  - dbus-libs
-  - nss
-  - libXcomposite
-  - libXdamage
-  - libXrender
-  - libXrandr
-  - libXtst
-  - pciutils-libs
-  - alsa-lib
-  - libxkbfile
-  - libpng
-  # UI requires old fonts
-  - xorg-x11-fonts-ISO8859-1-75dpi
-  - xorg-x11-fonts-ISO8859-1-100dpi
+  default: &maya_pedendencies_default
+    - mesa-libGL
+    - libglvnd-opengl
+    - freetype
+    - libxkbcommon
+    - mesa-libGLU
+    - libtiff
+    - fontconfig
+    - libXinerama
+    - libXmu
+    - libXpm
+    - libXi
+    - mesa-libEGL
+    - dbus-libs
+    - nss
+    - libXcomposite
+    - libXdamage
+    - libXrender
+    - libXrandr
+    - libXtst
+    - pciutils-libs
+    - alsa-lib
+    - libxkbfile
+    - libpng
+    # UI requires old fonts
+    - xorg-x11-fonts-ISO8859-1-75dpi
+    - xorg-x11-fonts-ISO8859-1-100dpi
+  "2025.3.1":
+    - *maya_pedendencies_default
+  "2026.2.0":
+    - *maya_pedendencies_default
+    - libva
+    - libvdpau
 
 adsk_licensing_dependencies:
   - compat-openssl11
