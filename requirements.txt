@@ -1,2 +1,1 @@
-# Add python requirements if any
-# docker==7.1.0
+lxml
