@@ -15,7 +15,7 @@
     path: "{{ maya_install_dir }}"
   register: maya_install_result
 
-- name: Include setup procedure
+- name: Get setup files
   when: not maya_install_result.stat.exists
   loop: "{{ maya_installers }}"
   loop_control:
@@ -28,6 +28,13 @@
   when: license_manager
   ansible.builtin.include_tasks:
     file: adsk_licensing_install.yml
+
+- name: Install task dependencies
+  become: true
+  loop: "{{ task_dependencies }}"
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: "present"
 
 - name: Include maya install
   ansible.builtin.include_tasks:

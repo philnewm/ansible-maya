@@ -8,6 +8,7 @@
     loop_var: maya_dependency
   ansible.builtin.package:
     name: "{{ maya_dependency }}"
+    state: "present"
 
 - name: Get packages from xml
   community.general.xml:

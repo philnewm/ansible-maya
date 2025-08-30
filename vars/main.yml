@@ -48,4 +48,7 @@ adsk_licensing_dependencies:
 
 # autodesk depedency ref https://help.autodesk.com/view/MAYAUL/2025/ENU/?guid=GUID-D2B5433C-E0D2-421B-9BD8-24FED217FD7F
 
+task_dependencies:
+  - python3-lxml
+
 ...
