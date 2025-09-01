@@ -10,22 +10,13 @@
 - name: Gather package facts
   ansible.builtin.package_facts:
 
-- name: Check for existing maya version
+- name: Check for existing license manager
   ansible.builtin.stat:
-    path: "{{ maya_install_dir }}"
-  register: maya_install_result
-
-- name: Get setup files
-  when: not maya_install_result.stat.exists
-  loop: "{{ maya_installers }}"
-  loop_control:
-    loop_var: "installer"
-    label: "{{ installer.name }}"
-  ansible.builtin.include_tasks:
-    file: get_setups.yml
+    path: "{{ license_manager_install_dir }}"
+  register: license_install_result
 
 - name: Include license manager install
-  when: license_manager
+  when: license_manager and not license_install_result.stat.exists
   ansible.builtin.include_tasks:
     file: adsk_licensing_install.yml
 
@@ -36,7 +27,13 @@
     name: "{{ item }}"
     state: "present"
 
+- name: Check for existing maya version
+  ansible.builtin.stat:
+    path: "{{ maya_install_dir }}"
+  register: maya_install_result
+
 - name: Include maya install
+  when: not maya_install_result.stat.exists
   ansible.builtin.include_tasks:
     file: maya_install.yml
 

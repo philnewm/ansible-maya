@@ -1,0 +1,51 @@
+---
+
+- name: Create temporary installer dir
+  become: true
+  ansible.builtin.file:
+    path: "{{ installer.target_directory }}/installer"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: Show installer file name
+  ansible.builtin.debug:
+    msg: "{{ installer.target_directory }}/installer/{{ installer.url | basename }}"
+
+- name: Check for existing installer
+  ansible.builtin.stat:
+    path: "{{ installer.target_directory }}/installer/{{ installer.url | basename }}"
+  register: extracted
+
+- name: Download installer
+  become: true
+  when: not extracted.stat.exists
+  ansible.builtin.get_url:
+    url: "{{ installer.url }}"
+    dest: "{{ installer.target_directory }}/installer"
+    mode: "0755"
+    timeout: 300
+
+- name: Extract installer
+  become: true
+  ansible.builtin.unarchive:
+    src: "{{ installer.target_directory }}/installer/{{ installer.url | basename }}"
+    dest: "{{ installer.target_directory }}"
+    remote_src: true
+    owner: "root"
+    group: "root"
+    mode: "0755"
+    creates: "{{ installer.target_directory }}/{{ installer.package_sub_dir }}"
+  register: unarchive_result
+  until: unarchive_result is succeeded
+  retries: 3
+  delay: 3
+
+- name: Remove installer file
+  become: true
+  ansible.builtin.file:
+    path: "{{ license_manager_package_dir }}/installer"
+    state: "absent"
+
+...

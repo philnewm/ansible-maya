@@ -60,4 +60,10 @@
         path: "{{ maya_modules_dir }}/substance2.mod"
         state: absent
 
+- name: Remove installer packages
+  become: true
+  ansible.builtin.file:
+    path: "{{ maya_package_dir }}/{{ maya_package_sub_dir }}"
+    state: "absent"
+
 ...

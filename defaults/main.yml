@@ -13,6 +13,7 @@ license_manager: true
 adsk_license_manager_setups:
   "15.7.0.13899": "https://damassets.autodesk.net/content/dam/autodesk/external-assets/support-articles/autodesk-licensing-service-download/15-7-0-13899/AdskLicensingInstaller-linux-15.7.0.13899.tar.gz"
   "15.6.0.13599": "https://up1.autodesk.com/NetSWCOM/prd/2026/PLC0000036/5DD68EF7-2F7F-3498-BDC2-5C80B2769757//AdskLicensingInstaller-15.6.0.13599.tar.gz"
+license_manager_install_dir: "/opt/Autodesk/AdskLicensing"
 license_manager_package_dir: "/tmp/adsk_licensing_{{ adsk_license_manager_version }}_packages"
 license_manager_package_sub_dir: "adsklicensinginstaller"
 
@@ -26,15 +27,15 @@ maya_modules_dir: "{{ autodesk_dir }}/modules/maya/{{ maya_version_major }}"
 maya_package_dir: "/tmp/maya_{{ maya_version }}_packages"
 maya_package_sub_dir: "Packages"
 
-maya_installers:
-  - name: License manager
-    url: "{{ adsk_license_manager_setups[adsk_license_manager_version] }}"
-    target_directory: "/tmp/adsk_licensing_{{ adsk_license_manager_version }}_packages"
-    package_sub_dir: "{{ license_manager_package_sub_dir }}"
-  - name: Maya installer
-    url: "{{ maya_setups[maya_version] }}"
-    target_directory: "/tmp/maya_{{ maya_version }}_packages"
-    package_sub_dir: "{{ maya_package_sub_dir }}"
+license_manager_installer:
+  url: "{{ adsk_license_manager_setups[adsk_license_manager_version] }}"
+  target_directory: "/tmp/adsk_licensing_{{ adsk_license_manager_version }}_packages"
+  package_sub_dir: "{{ license_manager_package_sub_dir }}"
+
+maya_installer:
+  url: "{{ maya_setups[maya_version] }}"
+  target_directory: "/tmp/maya_{{ maya_version }}_packages"
+  package_sub_dir: "{{ maya_package_sub_dir }}"
 
 license_manager_packages:
   - "adskidentitymanager"  # dependency of adsklicensing
