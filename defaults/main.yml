@@ -28,11 +28,13 @@ maya_package_dir: "/tmp/maya_{{ maya_version }}_packages"
 maya_package_sub_dir: "Packages"
 
 license_manager_installer:
+  name: "License Manager Installer"
   url: "{{ adsk_license_manager_setups[adsk_license_manager_version] }}"
   target_directory: "/tmp/adsk_licensing_{{ adsk_license_manager_version }}_packages"
   package_sub_dir: "{{ license_manager_package_sub_dir }}"
 
 maya_installer:
+  name: "Maya-Installer"
   url: "{{ maya_setups[maya_version] }}"
   target_directory: "/tmp/maya_{{ maya_version }}_packages"
   package_sub_dir: "{{ maya_package_sub_dir }}"

@@ -1,9 +1,6 @@
 ---
 
-- name: Get packages from xml
-  loop: "{{ maya_packages }}"
-  loop_control:
-    loop_var: maya_package
+- name: "Get xml attributes for {{ maya_package }}"
   community.general.xml:
     path: "{{ maya_package_dir }}/{{ maya_package_sub_dir }}/pkg.{{ maya_package | lower }}.xml"
     xpath: "/_:Package/_:Configuration/_:InstallFile"
@@ -12,39 +9,28 @@
       _: "{{ xml_namespace }}"
   register: xml_result
 
-- name: Build package mapping from xml results
-  loop: "{{ xml_result.results }}"
-  loop_control:
-    label: "{{ item.maya_package }}"
+- name: Get package attributes from xml results
   ansible.builtin.set_fact:
-    maya_packages_map: >-
-      {{
-        maya_packages_map | default({})
-        | combine({
-            item.maya_package: item.matches[0]['{' ~ item.actions.namespaces._ ~ '}InstallFile']
-          })
-      }}
+    maya_package_attr: "{{ xml_result.matches[0]['{' ~ xml_result.actions.namespaces._ ~ '}InstallFile'] }}"
 
-- name: Install maya plugin packages
+- name: "Install maya plugin package {{ maya_package }}"
   become: true
-  loop: "{{ maya_packages_map | dict2items }}"
-  loop_control:
-    loop_var: maya_package
-    label: "{{ maya_package.key }}"
   ansible.builtin.command:
     cmd: >-
       {{
-        maya_install_cmds[maya_package.value.type]
-        ~ (maya_package.value.type == 'RPM' and ' ' ~ (maya_package.value.installParams | default('')) or '')
+        maya_install_cmds[maya_package_attr.type]
+        ~ (maya_package_attr.type == 'RPM' and ' ' ~ (maya_package_attr.installParams | default('')) or '')
         ~ ' '
-        ~ maya_package.value.file
+        ~ maya_package_attr.file
       }}
     chdir: "{{ maya_package_dir }}"
-    creates: "{{ maya_modules_dir }}/{{ maya_package.key | lower }}.mod"
+    creates: "{{ maya_modules_dir }}/{{ maya_package | lower }}.mod"
   register: plugin_install_result
 
+# INFO renaming this `.mod` file is intended for streamlining only
+# It doesn't seem to interfere with functionality
 - name: Rename Substance module
-  when: '"Substance" in maya_packages and plugin_install_result.changed'
+  when: 'maya_package == "Substance" and plugin_install_result.changed'
   block:
     - name: Rename substance module file
       become: true
@@ -59,11 +45,5 @@
       ansible.builtin.file:
         path: "{{ maya_modules_dir }}/substance2.mod"
         state: absent
-
-- name: Remove installer packages
-  become: true
-  ansible.builtin.file:
-    path: "{{ maya_package_dir }}/{{ maya_package_sub_dir }}"
-    state: "absent"
 
 ...

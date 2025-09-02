@@ -1,13 +1,5 @@
 ---
 
-- name: Set installer
-  ansible.builtin.set_fact:
-    installer: "{{ maya_installer }}"
-
-- name: Get installer
-  ansible.builtin.include_tasks:
-    file: get_setup.yml
-
 - name: Install dependencies
   become: true
   when: maya_dependency not in ansible_facts.packages
@@ -27,7 +19,7 @@
       _: "{{ xml_namespace }}"
   register: xml_result
 
-- name: Build package mapping from XML results
+- name: Get package attributes from xml results
   ansible.builtin.set_fact:
     maya_package_map: "{{ xml_result.matches[0]['{' ~ xml_result.actions.namespaces._ ~ '}InstallFile'] }}"
 

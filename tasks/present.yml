@@ -15,10 +15,20 @@
     path: "{{ license_manager_install_dir }}"
   register: license_install_result
 
-- name: Include license manager install
+- name: Handle license installer
   when: license_manager and not license_install_result.stat.exists
-  ansible.builtin.include_tasks:
-    file: adsk_licensing_install.yml
+  block:
+    - name: Set installer
+      ansible.builtin.set_fact:
+        installer: "{{ license_manager_installer }}"
+
+    - name: Get installer
+      ansible.builtin.include_tasks:
+        file: get_setup.yml
+
+    - name: Include license manager install
+      ansible.builtin.include_tasks:
+        file: adsk_licensing_install.yml
 
 - name: Install task dependencies
   become: true
@@ -32,13 +42,42 @@
     path: "{{ maya_install_dir }}"
   register: maya_install_result
 
-- name: Include maya install
+- name: Handle Maya install
   when: not maya_install_result.stat.exists
-  ansible.builtin.include_tasks:
-    file: maya_install.yml
+  block:
+    - name: Set installer
+      ansible.builtin.set_fact:
+        installer: "{{ maya_installer }}"
 
-- name: Include maya install
+    - name: Get installer
+      ansible.builtin.include_tasks:
+        file: get_setup.yml
+
+    - name: Include maya install
+      ansible.builtin.include_tasks:
+        file: maya_install.yml
+
+- name: Find existing maya modules
+  ansible.builtin.find:
+    path: "{{ maya_modules_dir }}"
+  register: maya_modules_result
+
+- name: Extract file paths
+  ansible.builtin.set_fact:
+    maya_module_files: "{{ maya_modules_result.files | map(attribute='path') | map('basename') | list }}"
+
+- name: Include maya plugin install
+  when: (maya_package | lower ~ '.mod') not in maya_module_files
+  loop: "{{ maya_packages }}"
+  loop_control:
+    loop_var: maya_package
   ansible.builtin.include_tasks:
     file: maya_plugins_install.yml
+
+- name: Remove installer packages
+  become: true
+  ansible.builtin.file:
+    path: "{{ maya_package_dir }}/{{ maya_package_sub_dir }}"
+    state: "absent"
 
 ...

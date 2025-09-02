@@ -9,11 +9,7 @@
     group: "root"
     mode: "0755"
 
-- name: Show installer file name
-  ansible.builtin.debug:
-    msg: "{{ installer.target_directory }}/installer/{{ installer.url | basename }}"
-
-- name: Check for existing installer
+- name: "Check for existing installer {{ installer.name }}"
   ansible.builtin.stat:
     path: "{{ installer.target_directory }}/installer/{{ installer.url | basename }}"
   register: extracted
@@ -27,7 +23,7 @@
     mode: "0755"
     timeout: 300
 
-- name: Extract installer
+- name: "Extract installer {{ installer.name }}"
   become: true
   ansible.builtin.unarchive:
     src: "{{ installer.target_directory }}/installer/{{ installer.url | basename }}"
