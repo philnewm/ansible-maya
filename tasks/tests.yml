@@ -8,7 +8,7 @@
   loop: "{{ license_manager_packages + maya_plugin_packages + ['Maya2025'] }}"
   ansible.builtin.assert:
     that:
-      - ansible_facts.packages.keys() | select('search', item, ignorecase=True) | list | first
+      - (ansible_facts.packages.keys() | select('search', item, ignorecase=True) | list | length) > 0
     fail_msg: "Failed to find package for '{{ item }}'"
     quiet: true
 
