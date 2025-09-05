@@ -1,5 +1,39 @@
 ---
 
+- name: Gather package facts
+  ansible.builtin.package_facts:
+
+- name: Uninstall maya packages
+  become: true
+  loop: "{{ maya_plugin_packages + ['Maya2025'] }}"
+  when:
+    - item != "MtoA"
+    - (ansible_facts.packages.keys()
+      | select('search', item, ignorecase=True)
+      | list | length) > 0
+  ansible.builtin.package:
+    name: "{{ ansible_facts.packages.keys() | select('search', item, ignorecase=True) | list | first }}"
+    state: "absent"
+
+- name: Uninstall license manager packages
+  become: true
+  loop: "{{ license_manager_packages }}"
+  when:
+    - (ansible_facts.packages.keys()
+      | select('search', item, ignorecase=True)
+      | list | length) > 0
+  ansible.builtin.package:
+    name: "{{ ansible_facts.packages.keys() | select('search', item, ignorecase=True) | list | first }}"
+    state: "absent"
+
+- name: Remove maya directory
+  loop:
+    - "{{ autodesk_dir }}"
+    - "/opt/Autodesk"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "absent"
+
 - name: Remove unused dependencies
   become: true
   ansible.builtin.package:

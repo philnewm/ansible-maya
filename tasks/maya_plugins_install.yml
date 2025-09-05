@@ -1,8 +1,8 @@
 ---
 
-- name: "Get xml attributes for {{ maya_package }}"
+- name: "Get xml attributes for {{ maya_plugin_package }}"
   community.general.xml:
-    path: "{{ maya_package_dir }}/{{ maya_package_sub_dir }}/pkg.{{ maya_package | lower }}.xml"
+    path: "{{ maya_package_dir }}/{{ maya_package_sub_dir }}/pkg.{{ maya_plugin_package | lower }}.xml"
     xpath: "/_:Package/_:Configuration/_:InstallFile"
     content: attribute
     namespaces:
@@ -13,7 +13,7 @@
   ansible.builtin.set_fact:
     maya_package_attr: "{{ xml_result.matches[0]['{' ~ xml_result.actions.namespaces._ ~ '}InstallFile'] }}"
 
-- name: "Install maya plugin package {{ maya_package }}"
+- name: "Install maya plugin package {{ maya_plugin_package }}"
   become: true
   ansible.builtin.command:
     cmd: >-
@@ -24,13 +24,13 @@
         ~ maya_package_attr.file
       }}
     chdir: "{{ maya_package_dir }}"
-    creates: "{{ maya_modules_dir }}/{{ maya_package | lower }}.mod"
+    creates: "{{ maya_modules_dir }}/{{ maya_plugin_package | lower }}.mod"
   register: plugin_install_result
 
 # INFO renaming this `.mod` file is intended for streamlining only
 # It doesn't seem to interfere with functionality
 - name: Rename Substance module
-  when: 'maya_package == "Substance" and plugin_install_result.changed'
+  when: 'maya_plugin_package == "Substance" and plugin_install_result.changed'
   block:
     - name: Rename substance module file
       become: true

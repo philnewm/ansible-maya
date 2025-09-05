@@ -67,10 +67,10 @@
     maya_module_files: "{{ maya_modules_result.files | map(attribute='path') | map('basename') | list }}"
 
 - name: Include maya plugin install
-  when: (maya_package | lower ~ '.mod') not in maya_module_files
-  loop: "{{ maya_packages }}"
+  when: (maya_plugin_package | lower ~ '.mod') not in maya_module_files
+  loop: "{{ maya_plugin_packages }}"
   loop_control:
-    loop_var: maya_package
+    loop_var: maya_plugin_package
   ansible.builtin.include_tasks:
     file: maya_plugins_install.yml
 
@@ -78,6 +78,14 @@
   become: true
   ansible.builtin.file:
     path: "{{ maya_package_dir }}/{{ maya_package_sub_dir }}"
+    state: "absent"
+
+- name: Remove asset libs
+  become: true
+  when: remove_asset_libs
+  loop: "{{ maya_asset_libs }}"
+  ansible.builtin.file:
+    path: "{{ item }}"
     state: "absent"
 
 ...

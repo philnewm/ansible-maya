@@ -46,15 +46,21 @@ license_manager_packages:
   - "adlmapps"
 
 xml_namespace: https://emsfs.autodesk.com/schema/manifest/1/0
-maya_packages:
+maya_plugin_packages:
   - "MayaUSD"
   - "Bifrost"
   - "Substance"
   - "LookdevX"
   - "MtoA"
-
 maya_install_cmds:
   RPM: "rpm"
   EXE: "bash"
+
+remove_asset_libs: false
+maya_asset_libs:
+  - "{{ maya_install_dir }}/Examples"
+  - "{{ maya_install_dir }}/presets"
+  - "{{ maya_install_dir }}/brushImages"
+  - "{{ maya_install_dir }}/brushShapes"
 
 ...

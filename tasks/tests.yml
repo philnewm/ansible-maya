@@ -1,7 +1,45 @@
 ---
 
-- name: Nothing yet
-  ansible.builtin.debug:
-    msg: "Nothing to test yet"
+- name: Gather package facts
+  ansible.builtin.package_facts:
+
+- name: Test installed packages
+  when: item != "MtoA"
+  loop: "{{ license_manager_packages + maya_plugin_packages + ['Maya2025'] }}"
+  ansible.builtin.assert:
+    that:
+      - ansible_facts.packages.keys() | select('search', item, ignorecase=True) | list | first
+    fail_msg: "Failed to find package for '{{ item }}'"
+    quiet: true
+
+- name: Run Maya executable
+  ansible.builtin.command:
+    cmd: "maya -v"
+  changed_when: false
+  register: maya_output
+
+- name: Test maya output
+  ansible.builtin.assert:
+    that:
+      - '"Maya " ~ maya_version_major in maya_output.stdout'
+    fail_msg: "Failed to start maya"
+    quiet: true
+
+- name: Find existing maya modules
+  ansible.builtin.find:
+    path: "{{ maya_modules_dir }}"
+  register: maya_modules_result
+
+- name: Extract file paths
+  ansible.builtin.set_fact:
+    maya_module_files: "{{ maya_modules_result.files | map(attribute='path') | map('basename') | list }}"
+
+- name: Test installed maya modules
+  loop: "{{ maya_plugin_packages }}"
+  ansible.builtin.assert:
+    that:
+      - (item | lower ~ '.mod') in maya_module_files
+    fail_msg: "Failed to find module file for '{{ (item | lower ~ '.mod') }}'"
+    quiet: true
 
 ...
