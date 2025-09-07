@@ -3,19 +3,12 @@
 galaxy_info:
   role_name: maya
   namespace: philnewm
-  author: author_name
-  description: ansible-role-template description
-  license: some_license
+  description: Install maya and plugins
+  license: MIT
   min_ansible_version: "2.1"
   platforms:
     - name: EL
       versions:
         - "9"
-    - name: Debian
-      versions:
-        - "bookworm"
-    - name: "Ubuntu"
-      versions:
-        - "jammy"
   galaxy_tags: []
 dependencies: []

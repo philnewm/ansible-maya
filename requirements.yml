@@ -1,6 +1,2 @@
-# Add ansible role requirements
 collections:
   - community.general
-
-# roles:
-#   - name: <role.name>
