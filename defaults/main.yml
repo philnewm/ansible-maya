@@ -56,7 +56,7 @@ maya_install_cmds:
   RPM: "rpm"
   EXE: "bash"
 
-remove_asset_libs: false
+maya_remove_asset_libs: false
 maya_asset_libs:
   - "{{ maya_install_dir }}/Examples"
   - "{{ maya_install_dir }}/presets"

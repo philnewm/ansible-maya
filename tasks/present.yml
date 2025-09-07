@@ -82,7 +82,7 @@
 
 - name: Remove asset libs
   become: true
-  when: remove_asset_libs
+  when: maya_remove_asset_libs
   loop: "{{ maya_asset_libs }}"
   ansible.builtin.file:
     path: "{{ item }}"
