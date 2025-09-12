@@ -30,6 +30,15 @@
     state: "present"
     disable_gpg_check: true
 
+# INFO required for headless usage
+- name: Symlink libffi version 6
+  when: ansible_os_family == "RedHat"
+  become: true
+  ansible.builtin.file:
+    src: /usr/lib64/libffi.so.8
+    dest: /usr/lib64/libffi.so.6
+    state: link
+
 - name: Remove maya installer packages
   become: true
   ansible.builtin.file:
