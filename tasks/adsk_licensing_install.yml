@@ -16,13 +16,6 @@
     patterns: "{{ item }}*.rpm"
   register: found_rpms
 
-# - name: Show file matches
-#   loop: "{{ found_rpms.results }}"
-#   loop_control:
-#     label: "{{ item.item }}"
-#   ansible.builtin.debug:
-#     msg: "{{ item.files | map(attribute='path') | first | basename | splitext | first }}"
-
 - name: Install license manager packages
   become: true
   loop: "{{ found_rpms.results }}"
