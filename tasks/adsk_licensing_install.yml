@@ -9,27 +9,34 @@
   ansible.builtin.package:
     name: "{{ adsk_licensing_dependency }}"
 
-- name: Find license manager RPMs
-  loop: "{{ license_manager_packages }}"
-  ansible.builtin.find:
-    paths: "{{ license_manager_package_dir }}/{{ license_manager_package_sub_dir }}"
-    patterns: "{{ item }}*.rpm"
-  register: found_rpms
+# INFO extract parts of the script to enable almalinux
+- name: Extract installation lines from script
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      tac install.sh | sed -n '/^$/,$d;p' | tac
+    chdir: "{{ maya_tmp_package_path }}/{{ license_manager_package_sub_dir }}"
+    executable: /bin/bash
+  changed_when: false
+  register: install_commands
 
-- name: Install license manager packages
+# INFO source function from script
+- name: Run installer
   become: true
-  loop: "{{ found_rpms.results }}"
-  loop_control:
-    label: "{{ item.item }}"
-  ansible.builtin.dnf:
-    name: "{{ item.files | map(attribute='path') | first }}"
-    state: "present"
-    disable_gpg_check: true
+  ansible.builtin.shell:
+    cmd: |
+      source install.sh
+      {{ install_commands.stdout }}
+    chdir: "{{ maya_tmp_package_path }}/{{ license_manager_package_sub_dir }}"
+    executable: /bin/bash
+  register: licenese_manager_install_result
+  failed_when: '"installation failed." in licenese_manager_install_result.stderr'
+  changed_when: licenese_manager_install_result.rc == 0
 
 - name: Remove installer packages
   become: true
   ansible.builtin.file:
-    path: "{{ installer.target_directory }}/{{ license_manager_package_sub_dir }}"
+    path: "{{ maya_tmp_package_path }}/{{ license_manager_package_sub_dir }}"
     state: "absent"
 
 ...
