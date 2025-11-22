@@ -2,7 +2,7 @@
 
 - name: "Get xml attributes for {{ maya_plugin_package }}"
   community.general.xml:
-    path: "{{ maya_package_dir }}/{{ maya_package_sub_dir }}/pkg.{{ maya_plugin_package | lower }}.xml"
+    path: "{{ maya_tmp_package_path }}/{{ maya_package_sub_dir }}/pkg.{{ maya_plugin_package | lower }}.xml"
     xpath: "/_:Package/_:Configuration/_:InstallFile"
     content: attribute
     namespaces:
@@ -23,7 +23,7 @@
         ~ ' '
         ~ maya_package_attr.file
       }}
-    chdir: "{{ maya_package_dir }}"
+    chdir: "{{ maya_tmp_package_path }}"
     creates: "{{ maya_modules_dir }}/{{ maya_plugin_package | lower }}.mod"
   register: plugin_install_result
 

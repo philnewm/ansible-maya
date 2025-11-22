@@ -5,7 +5,7 @@
 
 - name: Test installed packages
   when: item != "MtoA"
-  loop: "{{ license_manager_packages + maya_plugin_packages + ['Maya2025'] }}"
+  loop: "{{ maya_plugin_packages + [maya_package_name] }}"
   ansible.builtin.assert:
     that:
       - (ansible_facts.packages.keys() | select('search', item, ignorecase=True) | list | length) > 0

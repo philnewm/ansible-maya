@@ -3,36 +3,68 @@
 - name: Create temporary installer dir
   become: true
   ansible.builtin.file:
-    path: "{{ installer.target_directory }}/installer"
+    path: "{{ maya_tmp_package_path }}"
     state: "directory"
     owner: "root"
     group: "root"
     mode: "0755"
 
-- name: "Check for existing installer {{ installer.name }}"
+- name: "Check for extracted {{ installer_url | basename }}"
   ansible.builtin.stat:
-    path: "{{ installer.target_directory }}/installer/{{ installer.url | basename }}"
-  register: extracted
+    path: "{{ maya_tmp_package_path }}/{{ sub_dir }}"
+  register: extracted_host
 
 - name: Download installer
   become: true
-  when: not extracted.stat.exists
+  when: not extracted_host.stat.exists and not maya_controller_download
   ansible.builtin.get_url:
-    url: "{{ installer.url }}"
-    dest: "{{ installer.target_directory }}/installer"
+    url: "{{ installer_url }}"
+    dest: "{{ maya_tmp_package_path }}"
     mode: "0755"
     timeout: 300
 
-- name: "Extract installer {{ installer.name }}"
+- name: Run controller download
+  when: not extracted_host.stat.exists and maya_controller_download
+  block:
+    - name: Create temporary installer dir
+      ansible.builtin.file:
+        path: "{{ maya_tmp_package_path }}"
+        state: "directory"
+        mode: "0755"
+      delegate_to: localhost
+
+    - name: "Check for existing installer {{ installer_url | basename }}"
+      ansible.builtin.stat:
+        path: "{{ maya_tmp_package_path }}/{{ installer_url | basename }}"
+      delegate_to: localhost
+      register: installer_controller
+
+    - name: Download installer onto controller
+      when: not installer_controller.stat.exists
+      ansible.builtin.get_url:
+        url: "{{ installer_url }}"
+        dest: "{{ maya_tmp_package_path }}"
+        mode: "0755"
+        timeout: 300
+      delegate_to: localhost
+
+    - name: Copy installer to remote host
+      become: true
+      ansible.builtin.copy:
+        src: "{{ maya_tmp_package_path }}/{{ installer_url | basename }}"
+        dest: "{{ maya_tmp_package_path }}"
+        mode: "0755"
+
+- name: "Extract installer {{ installer_url | basename }}"
   become: true
   ansible.builtin.unarchive:
-    src: "{{ installer.target_directory }}/installer/{{ installer.url | basename }}"
-    dest: "{{ installer.target_directory }}"
+    src: "{{ maya_tmp_package_path }}/{{ installer_url | basename }}"
+    dest: "{{ maya_tmp_package_path }}"
     remote_src: true
     owner: "root"
     group: "root"
     mode: "0755"
-    creates: "{{ installer.target_directory }}/{{ installer.package_sub_dir }}"
+    creates: "{{ maya_tmp_package_path }}/{{ sub_dir }}"
   register: unarchive_result
   until: unarchive_result is succeeded
   retries: 3
@@ -41,7 +73,7 @@
 - name: Remove installer file
   become: true
   ansible.builtin.file:
-    path: "{{ license_manager_package_dir }}/installer"
+    path: "{{ maya_tmp_package_path }}/{{ installer_url | basename }}"
     state: "absent"
 
 ...

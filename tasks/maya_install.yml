@@ -12,7 +12,7 @@
 
 - name: Get packages from xml
   community.general.xml:
-    path: "{{ maya_package_dir }}/{{ maya_package_sub_dir }}/pkg.maya.xml"
+    path: "{{ maya_tmp_package_path }}/{{ maya_package_sub_dir }}/pkg.maya.xml"
     xpath: "/_:Package/_:Configuration/_:InstallFile"
     content: attribute
     namespaces:
@@ -26,7 +26,7 @@
 - name: Install maya package
   become: true
   ansible.builtin.dnf:
-    name: "{{ maya_package_dir }}/{{ maya_package_map.file }}"
+    name: "{{ maya_tmp_package_path }}/{{ maya_package_map.file }}"
     state: "present"
     disable_gpg_check: true
 
@@ -42,7 +42,7 @@
 - name: Remove maya installer packages
   become: true
   ansible.builtin.file:
-    path: "{{ installer.target_directory }}/{{ license_manager_package_sub_dir }}/{{ maya_package_map.file }}"
+    path: "{{ maya_tmp_package_path }}/{{ license_manager_package_sub_dir }}/{{ maya_package_map.file }}"
     state: "absent"
 
 ...

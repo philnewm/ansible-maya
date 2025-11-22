@@ -10,17 +10,13 @@
 - name: Gather package facts
   ansible.builtin.package_facts:
 
-- name: Check for existing license manager
-  ansible.builtin.stat:
-    path: "{{ license_manager_install_dir }}"
-  register: license_install_result
-
 - name: Handle license installer
-  when: license_manager and not license_install_result.stat.exists
+  when: license_manager and license_manager_package_name not in ansible_facts.packages
   block:
     - name: Set installer
       ansible.builtin.set_fact:
-        installer: "{{ license_manager_installer }}"
+        installer_url: "{{ license_manager_installer_url }}"
+        sub_dir: "{{ license_manager_package_sub_dir }}"
 
     - name: Get installer
       ansible.builtin.include_tasks:
@@ -37,17 +33,13 @@
     name: "{{ item }}"
     state: "present"
 
-- name: Check for existing maya version
-  ansible.builtin.stat:
-    path: "{{ maya_install_dir }}"
-  register: maya_install_result
-
 - name: Handle Maya install
-  when: not maya_install_result.stat.exists
+  when: maya_package_name not in ansible_facts.packages
   block:
     - name: Set installer
       ansible.builtin.set_fact:
-        installer: "{{ maya_installer }}"
+        installer_url: "{{ maya_installer_url }}"
+        sub_dir: "{{ maya_package_sub_dir }}"
 
     - name: Get installer
       ansible.builtin.include_tasks:
@@ -77,8 +69,16 @@
 - name: Remove installer packages
   become: true
   ansible.builtin.file:
-    path: "{{ maya_package_dir }}/{{ maya_package_sub_dir }}"
+    path: "{{ maya_tmp_package_path }}/{{ maya_package_sub_dir }}"
     state: "absent"
+
+# INFO maya warning on startup if this dir isn't present
+- name: Create CER dir
+  become: true
+  ansible.builtin.file:
+    path: /var/lib/Autodesk/CER
+    state: directory
+    mode: "0755"
 
 - name: Remove asset libs
   become: true

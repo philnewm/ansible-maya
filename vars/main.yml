@@ -1,5 +1,39 @@
 ---
 
+# License manager src https://www.autodesk.com/support/technical/article/caas/tsarticles/ts/6jWlafu6rb46GKeh4N2ssk.html
+maya_license_manager_setups:
+  "16.0.0.14411": https://damassets.autodesk.net/content/dam/autodesk/www/files/AdskLicensingInstaller-linux-16.0.0.14411.tar.gz
+  "15.7.1.13908": https://up1.autodesk.com/NetSWCOM/prd/2026/PLC0000036/345F8216-7515-3DBE-8794-62281DE646B2//AdskLicensingInstaller-15.7.1.13908.tar.gz
+  "15.7.0.13899": "https://damassets.autodesk.net/content/dam/autodesk/external-assets/support-articles/autodesk-licensing-service-download/15-7-0-13899/AdskLicensingInstaller-linux-15.7.0.13899.tar.gz"
+  "15.6.0.13599": "https://up1.autodesk.com/NetSWCOM/prd/2026/PLC0000036/5DD68EF7-2F7F-3498-BDC2-5C80B2769757//AdskLicensingInstaller-15.6.0.13599.tar.gz"
+
+# autodesk depedency ref https://help.autodesk.com/view/MAYAUL/2025/ENU/?guid=GUID-D2B5433C-E0D2-421B-9BD8-24FED217FD7F
+adsk_licensing_dependencies:
+  - compat-openssl11
+  - libglvnd-opengl
+  - pcre2-utf16
+  - xcb-util-cursor
+  - xcb-util-wm
+  - xcb-util-image
+  - xcb-util-keysyms
+  - xcb-util-renderutil
+  # INFO licesense UI runs `xdg-settings get default-web-browser` to detect default browser
+  - xdg-utils
+
+maya_license_manager_packages:
+  - "adskidentitymanager"  # dependency of adsklicensing
+  - "adsklicensing"
+  - "adskflexnetclient"  # dependency of adlmapps
+  - "adlmapps"
+
+maya_setups:
+  "2023.3.0": "https://efulfillment.autodesk.com/NetSWDLD/2023/MAYA/EC4CAAD2-186E-37F3-911B-DDEBDF7486CF/SFX//Autodesk_Maya_2023_3_Update_Linux_64bit.tgz"
+  "2024.2.0": "https://efulfillment.autodesk.com/NetSWDLD/2024/MAYA/884E0303-6110-3956-BC39-7FF285D0B188/SFX//Autodesk_Maya_2024_2_Update_Linux_64bit.tgz"
+  "2025.3.1": https://efulfillment.autodesk.com/NetSWDLD/prd/2025/MAYA/E33820FB-8D0C-353A-935B-07E239F12D09//Autodesk_Maya_2025_3_1_ML_Linux_64bit.tgz
+  "2026.1.0": "hhttps://efulfillment.autodesk.com/NetSWDLD/prd/2026/MAYA/A9AFE7E8-904B-3EEC-9689-0D2FD263FF90//Autodesk_Maya_2026_1_Update_ML_Linux_64bit.tgz"
+  "2026.2.0": "https://efulfillment.autodesk.com/NetSWDLD/prd/2026/MAYA/901073B8-F0A1-3952-A459-9CA36A875C41//Autodesk_Maya_2026_2_Update_Linux_64bit.tgz"
+  "2026.3.0": "https://efulfillment.autodesk.com/NetSWDLD/prd/2026/MAYA/670B3782-87C3-318C-B63E-B4465F01BD87//Autodesk_Maya_2026_3_Update_Linux_64bit.tgz"
+
 maya_dependencies:
   default: &maya_pedendencies_default
     - mesa-libGL
@@ -28,27 +62,31 @@ maya_dependencies:
     # UI requires old fonts
     - xorg-x11-fonts-ISO8859-1-75dpi
     - xorg-x11-fonts-ISO8859-1-100dpi
+  "2023.3.0":
+    - *maya_pedendencies_default
+  "2024.2.0":
+    - *maya_pedendencies_default
   "2025.3.1":
     - *maya_pedendencies_default
+  "2026.1.0":
+    - *maya_pedendencies_default
+    - libva
+    - libvdpau
   "2026.2.0":
     - *maya_pedendencies_default
     - libva
     - libvdpau
+  "2026.3.0":
+    - *maya_pedendencies_default
+    - libva
+    - libvdpau
 
-adsk_licensing_dependencies:
-  - compat-openssl11
-  - pcre2-utf16
-  - xcb-util-cursor
-  - xcb-util-wm
-  - xcb-util-image
-  - xcb-util-keysyms
-  - xcb-util-renderutil
-  # INFO licesense UI runs `xdg-settings get default-web-browser` to detect default browser
-  - xdg-utils
-
-# autodesk depedency ref https://help.autodesk.com/view/MAYAUL/2025/ENU/?guid=GUID-D2B5433C-E0D2-421B-9BD8-24FED217FD7F
+maya_install_cmds:
+  RPM: "rpm"
+  EXE: "bash"
 
 task_dependencies:
   - python3-lxml
+
 
 ...

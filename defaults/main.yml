@@ -1,7 +1,8 @@
 ---
 
 state: present
-adsk_license_manager_version: "15.6.0.13599"
+maya_controller_download: false
+maya_license_manager_version: "16.0.0.14411"
 maya_version_major: 2025
 maya_version_minor: 3
 maya_version_patch: 1
@@ -10,40 +11,18 @@ maya_version: "{{ maya_version_major }}.{{ maya_version_minor }}.{{ maya_version
 # INFO only supports 2020 product versions and later
 # https://www.autodesk.com/support/technical/article/caas/tsarticles/ts/f5IhBc15i0kOwzBb8lcEN.html
 license_manager: true
-adsk_license_manager_setups:
-  "15.7.0.13899": "https://damassets.autodesk.net/content/dam/autodesk/external-assets/support-articles/autodesk-licensing-service-download/15-7-0-13899/AdskLicensingInstaller-linux-15.7.0.13899.tar.gz"
-  "15.6.0.13599": "https://up1.autodesk.com/NetSWCOM/prd/2026/PLC0000036/5DD68EF7-2F7F-3498-BDC2-5C80B2769757//AdskLicensingInstaller-15.6.0.13599.tar.gz"
+license_manager_package_name: "adsklicensing{{ maya_license_manager_version }}"
 license_manager_install_dir: "/opt/Autodesk/AdskLicensing"
-license_manager_package_dir: "/tmp/adsk_licensing_{{ adsk_license_manager_version }}_packages"
 license_manager_package_sub_dir: "adsklicensinginstaller"
+license_manager_installer_url: "{{ maya_license_manager_setups[maya_license_manager_version] }}"
 
-maya_setups:
-  "2025.3.1": https://efulfillment.autodesk.com/NetSWDLD/prd/2025/MAYA/E33820FB-8D0C-353A-935B-07E239F12D09//Autodesk_Maya_2025_3_1_ML_Linux_64bit.tgz
-  "2026.2.0": "https://efulfillment.autodesk.com/NetSWDLD/prd/2026/MAYA/901073B8-F0A1-3952-A459-9CA36A875C41//Autodesk_Maya_2026_2_Update_Linux_64bit.tgz"
-
-autodesk_dir: "/usr/autodesk"
-maya_install_dir: "{{ autodesk_dir }}/maya{{ maya_version_major }}"
-maya_modules_dir: "{{ autodesk_dir }}/modules/maya/{{ maya_version_major }}"
-maya_package_dir: "/tmp/maya_{{ maya_version }}_packages"
+maya_package_name: "Maya{{ maya_version_major }}_64"
+maya_autodesk_dir: "/usr/autodesk"
+maya_install_dir: "{{ maya_autodesk_dir }}/maya{{ maya_version_major }}"
+maya_modules_dir: "{{ maya_autodesk_dir }}/modules/maya/{{ maya_version_major }}"
 maya_package_sub_dir: "Packages"
-
-license_manager_installer:
-  name: "License Manager Installer"
-  url: "{{ adsk_license_manager_setups[adsk_license_manager_version] }}"
-  target_directory: "/tmp/adsk_licensing_{{ adsk_license_manager_version }}_packages"
-  package_sub_dir: "{{ license_manager_package_sub_dir }}"
-
-maya_installer:
-  name: "Maya-Installer"
-  url: "{{ maya_setups[maya_version] }}"
-  target_directory: "/tmp/maya_{{ maya_version }}_packages"
-  package_sub_dir: "{{ maya_package_sub_dir }}"
-
-license_manager_packages:
-  - "adskidentitymanager"  # dependency of adsklicensing
-  - "adsklicensing"
-  - "adskflexnetclient"  # dependency of adlmapps
-  - "adlmapps"
+maya_tmp_package_path: "/tmp/adsk_packages/installer"
+maya_installer_url: "{{ maya_setups[maya_version] }}"
 
 xml_namespace: https://emsfs.autodesk.com/schema/manifest/1/0
 maya_plugin_packages:
@@ -52,9 +31,6 @@ maya_plugin_packages:
   - "Substance"
   - "LookdevX"
   - "MtoA"
-maya_install_cmds:
-  RPM: "rpm"
-  EXE: "bash"
 
 maya_remove_asset_libs: false
 maya_asset_libs:
