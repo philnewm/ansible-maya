@@ -39,6 +39,14 @@
     dest: /usr/lib64/libffi.so.6
     state: link
 
+# - name: Symlink libtiff version 6
+#   when: ansible_distribution == "Fedora"
+#   become: true
+#   ansible.builtin.file:
+#     src: /usr/lib64/libtiff.so.6
+#     dest: /usr/lib64/libtiff.so.5
+#     state: link
+
 - name: Remove maya installer packages
   become: true
   ansible.builtin.file:

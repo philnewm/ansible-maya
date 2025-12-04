@@ -3,7 +3,7 @@
 - name: Install licensing dependencies
   become: true
   when: adsk_licensing_dependency not in ansible_facts.packages
-  loop: "{{ adsk_licensing_dependencies }}"
+  loop: "{{ adsk_licensing_dependencies[ansible_distribution | lower] | flatten(1) }}"
   loop_control:
     loop_var: adsk_licensing_dependency
   ansible.builtin.package:

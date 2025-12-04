@@ -3,9 +3,9 @@
 state: present
 maya_controller_download: false
 maya_license_manager_version: "16.0.0.14411"
-maya_version_major: 2025
+maya_version_major: 2026
 maya_version_minor: 3
-maya_version_patch: 1
+maya_version_patch: 0
 maya_version: "{{ maya_version_major }}.{{ maya_version_minor }}.{{ maya_version_patch }}"
 
 # INFO only supports 2020 product versions and later

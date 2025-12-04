@@ -55,6 +55,12 @@
         dest: "{{ maya_tmp_package_path }}"
         mode: "0755"
 
+- name: Install unarchive module dependency
+  become: true
+  ansible.builtin.package:
+    name: "tar"
+    state: present
+
 - name: "Extract installer {{ installer_url | basename }}"
   become: true
   ansible.builtin.unarchive:

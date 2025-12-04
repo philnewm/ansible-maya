@@ -9,16 +9,26 @@ maya_license_manager_setups:
 
 # autodesk depedency ref https://help.autodesk.com/view/MAYAUL/2025/ENU/?guid=GUID-D2B5433C-E0D2-421B-9BD8-24FED217FD7F
 adsk_licensing_dependencies:
-  - compat-openssl11
-  - libglvnd-opengl
-  - pcre2-utf16
-  - xcb-util-cursor
-  - xcb-util-wm
-  - xcb-util-image
-  - xcb-util-keysyms
-  - xcb-util-renderutil
-  # INFO licesense UI runs `xdg-settings get default-web-browser` to detect default browser
-  - xdg-utils
+  redhat: &dependencies_redhat
+    - libglvnd-opengl
+    - pcre2-utf16
+    - xcb-util-cursor
+    - xcb-util-wm
+    - xcb-util-image
+    - xcb-util-keysyms
+    - xcb-util-renderutil
+    # INFO licesense UI runs `xdg-settings get default-web-browser` to detect default browser
+    - xdg-utils
+  almalinux: &dependencies_almalinux
+    - *dependencies_almalinux
+    - compat-openssl11
+  rocky:
+    - *dependencies_almalinux
+  centos:
+    - *dependencies_almalinux
+  fedora:
+    - *dependencies_redhat
+    # - openssl  # https://repo.almalinux.org/almalinux/9.7/AppStream/x86_64/os/Packages/compat-openssl11-1.1.1k-5.el9_6.1.x86_64.rpm
 
 maya_license_manager_packages:
   - "adskidentitymanager"  # dependency of adsklicensing
