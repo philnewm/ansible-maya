@@ -22,12 +22,9 @@ adsk_licensing_dependencies:
   centos: &dependencies_centos
     - *dependencies_redhat
     - compat-openssl11
-  rocky:
-    - *dependencies_centos
-  almalinux:
-    - *dependencies_centos
-  fedora:
-    - *dependencies_redhat
+  rocky: *dependencies_centos
+  almalinux: *dependencies_centos
+  fedora: *dependencies_redhat
     # - openssl  # https://repo.almalinux.org/almalinux/9.7/AppStream/x86_64/os/Packages/compat-openssl11-1.1.1k-5.el9_6.1.x86_64.rpm
 
 maya_license_manager_packages:
