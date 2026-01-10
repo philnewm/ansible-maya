@@ -2,7 +2,7 @@
 
 state: present
 maya_controller_download: false
-maya_license_manager_version: "16.0.0.14411"
+maya_license_manager_version: "16.0.3.14414"
 maya_version_major: 2026
 maya_version_minor: 3
 maya_version_patch: 0
