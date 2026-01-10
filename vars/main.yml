@@ -2,8 +2,9 @@
 
 # License manager src https://www.autodesk.com/support/technical/article/caas/tsarticles/ts/6jWlafu6rb46GKeh4N2ssk.html
 maya_license_manager_setups:
-  "16.0.0.14411": https://damassets.autodesk.net/content/dam/autodesk/www/files/AdskLicensingInstaller-linux-16.0.0.14411.tar.gz
-  "15.7.1.13908": https://up1.autodesk.com/NetSWCOM/prd/2026/PLC0000036/345F8216-7515-3DBE-8794-62281DE646B2//AdskLicensingInstaller-15.7.1.13908.tar.gz
+  "16.0.3.14414": "https://damassets.autodesk.net/content/dam/autodesk/www/files/AdskLicensingInstaller-linux-16.0.3.14414.tar.gz"
+  # "16.0.0.14411": "https://damassets.autodesk.net/content/dam/autodesk/www/files/AdskLicensingInstaller-linux-16.0.0.14411.tar.gz" #  got corrupted
+  "15.7.1.13908": "https://up1.autodesk.com/NetSWCOM/prd/2026/PLC0000036/345F8216-7515-3DBE-8794-62281DE646B2//AdskLicensingInstaller-15.7.1.13908.tar.gz"
   "15.7.0.13899": "https://damassets.autodesk.net/content/dam/autodesk/external-assets/support-articles/autodesk-licensing-service-download/15-7-0-13899/AdskLicensingInstaller-linux-15.7.0.13899.tar.gz"
   "15.6.0.13599": "https://up1.autodesk.com/NetSWCOM/prd/2026/PLC0000036/5DD68EF7-2F7F-3498-BDC2-5C80B2769757//AdskLicensingInstaller-15.6.0.13599.tar.gz"
 
@@ -17,6 +18,7 @@ adsk_licensing_dependencies:
     - xcb-util-image
     - xcb-util-keysyms
     - xcb-util-renderutil
+    - libatomic
     # INFO licesense UI runs `xdg-settings get default-web-browser` to detect default browser
     - xdg-utils
   centos: &dependencies_centos
@@ -25,7 +27,6 @@ adsk_licensing_dependencies:
   rocky: *dependencies_centos
   almalinux: *dependencies_centos
   fedora: *dependencies_redhat
-    # - openssl  # https://repo.almalinux.org/almalinux/9.7/AppStream/x86_64/os/Packages/compat-openssl11-1.1.1k-5.el9_6.1.x86_64.rpm
 
 maya_license_manager_packages:
   - "adskidentitymanager"  # dependency of adsklicensing
@@ -34,8 +35,14 @@ maya_license_manager_packages:
   - "adlmapps"
 
 maya_setups:
+  "2023.1.0": "https://efulfillment.autodesk.com/NetSWDLD/2023/MAYA/5EAC488D-2DEF-3E65-855B-3FD22D5C92FE/SFX//Autodesk_Maya_2023_1_Update_Linux_64bit.tgz"
+  "2023.2.0": "https://efulfillment.autodesk.com/NetSWDLD/2023/MAYA/5F02119B-6F85-3355-9EF2-9E168654BAF6/SFX//Autodesk_Maya_2023_2_Update_Linux_64bit.tgz"
   "2023.3.0": "https://efulfillment.autodesk.com/NetSWDLD/2023/MAYA/EC4CAAD2-186E-37F3-911B-DDEBDF7486CF/SFX//Autodesk_Maya_2023_3_Update_Linux_64bit.tgz"
+  "2023.3.4": "https://efulfillment.autodesk.com/NetSWDLD/prd/2023/MAYA/FD6FA618-C30C-3A31-A1BA-D7E52E1EC0AE/SFX//Autodesk_Maya_2023_3_4_Security_Fix_Linux_64bit.tgz"
+  "2024.1.0": "https://efulfillment.autodesk.com/NetSWDLD/2024/MAYA/84B0DAAF-C73E-3135-B31B-7EDD324E3265/SFX//Autodesk_Maya_2024_1_Update_Linux_64bit.tgz"
   "2024.2.0": "https://efulfillment.autodesk.com/NetSWDLD/2024/MAYA/884E0303-6110-3956-BC39-7FF285D0B188/SFX//Autodesk_Maya_2024_2_Update_Linux_64bit.tgz"
+  "2025.1.0": "https://efulfillment.autodesk.com/NetSWDLD/2025/MAYA/70520D44-7415-3842-808A-580FDF65A2C2/ESD//Autodesk_Maya_2025_1_Update_Linux.tgz"
+  "2025.2.0": "https://efulfillment.autodesk.com/NetSWDLD/2025/MAYA/89F1E822-8BB8-3612-B96C-59738A85180F/ESD//Autodesk_Maya_2025_2_ML_Linux_64bit.tgz"
   "2025.3.1": https://efulfillment.autodesk.com/NetSWDLD/prd/2025/MAYA/E33820FB-8D0C-353A-935B-07E239F12D09//Autodesk_Maya_2025_3_1_ML_Linux_64bit.tgz
   "2026.1.0": "hhttps://efulfillment.autodesk.com/NetSWDLD/prd/2026/MAYA/A9AFE7E8-904B-3EEC-9689-0D2FD263FF90//Autodesk_Maya_2026_1_Update_ML_Linux_64bit.tgz"
   "2026.2.0": "https://efulfillment.autodesk.com/NetSWDLD/prd/2026/MAYA/901073B8-F0A1-3952-A459-9CA36A875C41//Autodesk_Maya_2026_2_Update_Linux_64bit.tgz"
@@ -87,6 +94,7 @@ maya_dependencies:
     - *maya_pedendencies_default
     - libva
     - libvdpau
+    - util-linux
 
 maya_install_cmds:
   RPM: "rpm"
