@@ -58,7 +58,9 @@
 - name: Install unarchive module dependency
   become: true
   ansible.builtin.package:
-    name: "tar"
+    name:
+      - "tar"
+      - "unzip"
     state: present
 
 - name: "Extract installer {{ installer_url | basename }}"
