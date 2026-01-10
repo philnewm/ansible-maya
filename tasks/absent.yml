@@ -17,7 +17,7 @@
 
 - name: Uninstall license manager packages
   become: true
-  loop: "{{ maya_license_manager_packages }}"
+  loop: "{{ maya_license_manager_packages | reverse }}"
   when:
     - (ansible_facts.packages.keys()
       | select('search', item, ignorecase=True)
@@ -27,16 +27,12 @@
     state: "absent"
 
 - name: Remove maya directory
+  become: true
   loop:
     - "{{ maya_autodesk_dir }}"
     - "/opt/Autodesk"
   ansible.builtin.file:
     path: "{{ item }}"
     state: "absent"
-
-- name: Remove unused dependencies
-  become: true
-  ansible.builtin.package:
-    autoremove: true
 
 ...
