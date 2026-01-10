@@ -27,8 +27,8 @@
     creates: "{{ maya_modules_dir }}/{{ maya_plugin_package | lower }}.mod"
   register: plugin_install_result
 
-# INFO renaming this `.mod` file is intended for streamlining only
-# It doesn't seem to interfere with functionality
+# Note renaming `.mod` for streamlining only
+# Doesn't seem to interfere with functionality
 - name: Rename Substance module
   when: 'maya_plugin_package == "Substance" and plugin_install_result.changed'
   block:

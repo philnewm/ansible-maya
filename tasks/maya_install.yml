@@ -26,31 +26,33 @@
 - name: Install maya package
   become: true
   ansible.builtin.dnf:
+    # Note dnf 4 backend prevents NEVRA parsing error
+    # libdnf5.exception.RpmNevraIncorrectInputError: Invalid character '/' in NEVRA string
     name: "{{ maya_tmp_package_path }}/{{ maya_package_map.file }}"
     state: "present"
     disable_gpg_check: true
 
 # INFO required for headless usage
 - name: Symlink libffi version 6
-  when: ansible_os_family == "RedHat"
+  when: ansible_facts.os_family | lower == "redhat"
   become: true
   ansible.builtin.file:
     src: /usr/lib64/libffi.so.8
     dest: /usr/lib64/libffi.so.6
     state: link
 
-# - name: Symlink libtiff version 6
-#   when: ansible_distribution == "Fedora"
-#   become: true
-#   ansible.builtin.file:
-#     src: /usr/lib64/libtiff.so.6
-#     dest: /usr/lib64/libtiff.so.5
-#     state: link
+- name: Symlink libtiff version 6
+  when: ansible_facts.distribution | lower == "fedora"
+  become: true
+  ansible.builtin.file:
+    src: /usr/lib64/libtiff.so.6
+    dest: /usr/lib64/libtiff.so.5
+    state: link
 
 - name: Remove maya installer packages
   become: true
   ansible.builtin.file:
-    path: "{{ maya_tmp_package_path }}/{{ license_manager_package_sub_dir }}/{{ maya_package_map.file }}"
+    path: "{{ maya_tmp_package_path }}/{{ sub_dir }}/{{ maya_package_map.file }}"
     state: "absent"
 
 ...
