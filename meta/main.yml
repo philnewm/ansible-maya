@@ -1,8 +1,8 @@
 ---
 
 galaxy_info:
+  author: philnewm
   role_name: maya
-  namespace: philnewm
   description: Install maya and plugins
   license: MIT
   min_ansible_version: "2.1"
@@ -10,5 +10,8 @@ galaxy_info:
     - name: EL
       versions:
         - "9"
+    - name: "Fedora"
+      versions:
+        - "43"
   galaxy_tags: []
 dependencies: []
