@@ -3,6 +3,48 @@
 - name: Gather package facts
   ansible.builtin.package_facts:
 
+- name: Gather service facts
+  ansible.builtin.service_facts:
+
+- name: Valdiate license manager setup
+  when: license_manager
+  block:
+    - name: Test adsklicensing service
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services['adsklicensing.service'] is defined
+          - ansible_facts.services['adsklicensing.service'].status == "enabled"
+          - ansible_facts.services['adsklicensing.service'].state == "running"
+        fail_msg: >-
+          adsklicensing.service does not run as expected
+          status={{ ansible_facts.services['adsklicensing.service'].status | default('missing') }}
+          state={{ ansible_facts.services['adsklicensing.service'].state | default('missing') }}
+        quiet: true
+
+    - name: Get license manager installer path
+      ansible.builtin.stat:
+        path: "{{ maya_tmp_package_path }}/{{ license_manager_package_sub_dir }}"
+      register: adsklicensing_installer_path
+
+    - name: Test absent license manager installer path
+      ansible.builtin.assert:
+        that:
+          - not adsklicensing_installer_path.stat.exists
+        fail_msg: "Temporary adsklicensing installer path still exsits: '{{ maya_tmp_package_path }}/{{ license_manager_package_sub_dir }}'"
+        quiet: true
+
+- name: Get maya installer path
+  ansible.builtin.stat:
+    path: "{{ maya_tmp_package_path }}/{{ maya_package_sub_dir }}"
+  register: maya_installer_path
+
+- name: Test absent maya installer path
+  ansible.builtin.assert:
+    that:
+      - not maya_installer_path.stat.exists
+    fail_msg: "Temporary maya installer path still exsits: '{{ maya_tmp_package_path }}/{{ maya_package_sub_dir }}'"
+    quiet: true
+
 - name: Test installed packages
   when: item != "MtoA"
   loop: "{{ maya_plugin_packages + [maya_package_name] }}"

@@ -1,30 +1,43 @@
 ---
 
-- name: Install debian specific package_facts dependency
-  become: true
-  when: ansible_distribution == "Debian"
-  ansible.builtin.package:
-    name: python-apt-common
-    state: present
-
 - name: Gather package facts
   ansible.builtin.package_facts:
 
 - name: Handle license installer
-  when: license_manager and license_manager_package_name not in ansible_facts.packages
+  when: license_manager
   block:
-    - name: Set installer
+    - name: Populate service facts
+      ansible.builtin.service_facts:
+
+    - name: Get adsklicensing status
+      when: ansible_facts.services['adsklicensing.service'] is defined
       ansible.builtin.set_fact:
-        installer_url: "{{ license_manager_installer_url }}"
-        sub_dir: "{{ license_manager_package_sub_dir }}"
+        adsk_licensing_status: "{{ ansible_facts.services['adsklicensing.service'].status }}"
 
-    - name: Get installer
-      ansible.builtin.include_tasks:
-        file: get_setup.yml
+    - name: Set up license manager
+      when: adsk_licensing_status is not defined or adsk_licensing_status != "enabled"
+      block:
+        - name: Set installer
+          ansible.builtin.set_fact:
+            installer_url: "{{ license_manager_installer_url }}"
+            sub_dir: "{{ license_manager_package_sub_dir }}"
 
-    - name: Include license manager install
-      ansible.builtin.include_tasks:
-        file: adsk_licensing_install.yml
+        - name: Get installer
+          ansible.builtin.include_tasks:
+            file: get_setup.yml
+
+        - name: Include license manager install
+          ansible.builtin.include_tasks:
+            file: adsk_licensing_install.yml
+
+    - name: Enable and start adsklicensing service
+      when: license_manager
+      become: true
+      ansible.builtin.systemd:
+        name: adsklicensing.service
+        enabled: true
+        state: started
+        daemon_reload: true
 
 - name: Install task dependencies
   become: true
@@ -69,10 +82,10 @@
 - name: Remove installer packages
   become: true
   ansible.builtin.file:
-    path: "{{ maya_tmp_package_path }}/{{ maya_package_sub_dir }}"
+    path: "{{ maya_tmp_package_path | dirname }}"
     state: "absent"
 
-# INFO maya warning on startup if this dir isn't present
+# Note maya warning on startup if this dir isn't present
 - name: Create CER dir
   become: true
   ansible.builtin.file:
