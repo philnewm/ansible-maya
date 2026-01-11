@@ -1,5 +1,16 @@
 ---
 
+- name: Verify maya version
+  when: maya_installer_url != maya_setups[maya_version]
+  ansible.builtin.assert:
+    that:
+      - "'Maya_' ~ maya_version_major ~ '_' ~ maya_version_minor in maya_installer_url"
+    fail_msg: |
+      Failed to find requested version 'Maya_{{ maya_version_major }}_{{ maya_version_minor }}' in {{ maya_installer_url }}.
+
+      Is this the intended source?
+    quiet: true
+
 - name: Gather package facts
   ansible.builtin.package_facts:
 
@@ -21,6 +32,17 @@
           ansible.builtin.set_fact:
             installer_url: "{{ license_manager_installer_url }}"
             sub_dir: "{{ license_manager_package_sub_dir }}"
+
+        - name: Verify adsklicensing version
+          when: license_manager_installer_url != maya_license_manager_setups[maya_license_manager_version]
+          ansible.builtin.assert:
+            that:
+              - "'linux-' ~ maya_license_manager_version in license_manager_installer_url"
+            fail_msg: |
+              Failed to find requested version 'linux-{{ maya_license_manager_version }}' in {{ license_manager_installer_url }}.
+
+              Is this the intended source?
+            quiet: true
 
         - name: Get installer
           ansible.builtin.include_tasks:

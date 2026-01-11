@@ -8,14 +8,6 @@ maya_version_minor: 3
 maya_version_patch: 0
 maya_version: "{{ maya_version_major }}.{{ maya_version_minor }}.{{ maya_version_patch }}"
 
-# INFO only supports 2020 product versions and later
-# https://www.autodesk.com/support/technical/article/caas/tsarticles/ts/f5IhBc15i0kOwzBb8lcEN.html
-license_manager: true
-license_manager_package_name: "adsklicensing{{ maya_license_manager_version }}"
-license_manager_install_dir: "/opt/Autodesk/AdskLicensing"
-license_manager_package_sub_dir: "adsklicensinginstaller"
-license_manager_installer_url: "{{ maya_license_manager_setups[maya_license_manager_version] }}"
-
 maya_package_name: "Maya{{ maya_version_major }}_64"
 maya_autodesk_dir: "/usr/autodesk"
 maya_install_dir: "{{ maya_autodesk_dir }}/maya{{ maya_version_major }}"
@@ -23,6 +15,12 @@ maya_modules_dir: "{{ maya_autodesk_dir }}/modules/maya/{{ maya_version_major }}
 maya_package_sub_dir: "Packages"
 maya_tmp_package_path: "/tmp/adsk_packages/installer"
 maya_installer_url: "{{ maya_setups[maya_version] }}"
+
+license_manager: true
+license_manager_package_name: "adsklicensing{{ maya_license_manager_version }}"
+license_manager_install_dir: "/opt/Autodesk/AdskLicensing"
+license_manager_package_sub_dir: "adsklicensinginstaller"
+license_manager_installer_url: "{{ maya_license_manager_setups[maya_license_manager_version] }}"
 
 xml_namespace: https://emsfs.autodesk.com/schema/manifest/1/0
 maya_plugin_packages:
