@@ -20,10 +20,15 @@ adsk_licensing_dependencies:
     - xcb-util-keysyms
     - xcb-util-renderutil
     - libatomic
+    - libXScrnSaver
+    - libnsl  # https://www.autodesk.com/support/technical/article/caas/sfdcarticles/sfdcarticles/adlsdkAuthorize-returned-with-error-code-ADLSDK-STATUS-LICENSE-CHECKOUT-ERROR-when-launching-Maya-2020-on-Linux.html
+    # required for /opt/Autodesk/AdskIdentityManager/1.15.3.5/AdskIdentityManager
+    - libsecret
     # INFO licesense UI runs `xdg-settings get default-web-browser` to detect default browser
     - xdg-utils
   centos: &dependencies_centos
     - *dependencies_redhat
+    - webkit2gtk3
     - compat-openssl11
   rocky: *dependencies_centos
   almalinux: *dependencies_centos

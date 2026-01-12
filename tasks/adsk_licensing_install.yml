@@ -9,13 +9,25 @@
   ansible.builtin.package:
     name: "{{ adsk_licensing_dependency }}"
 
-- name: Install compat-openssl11 on fedora
+# Note dnf5 prevents module based installs from urls due NEVRA parsing error
+- name: Install openssl11 on fedora usign almalinux9 repo
   become: true
-  when: ansible_facts.distribution | lower == "fedora"
-  ansible.builtin.dnf:
-    name: "https://repo.almalinux.org/almalinux/9.7/AppStream/x86_64/os/Packages/compat-openssl11-1.1.1k-5.el9_6.1.x86_64.rpm"
-    state: present
-    disable_gpg_check: true
+  when: ansible_facts.distribution | lower == "fedora" and "compat-openssl11" not in ansible_facts.packages
+  block:
+    - name: Download compat-openssl11 RPM
+      become: true
+      ansible.builtin.get_url:
+        url: "https://repo.almalinux.org/almalinux/9.7/AppStream/x86_64/os/Packages/compat-openssl11-1.1.1k-5.el9_6.1.x86_64.rpm"
+        dest: "/tmp/compat-openssl11.rpm"
+        mode: '0644'
+
+    - name: Install compat-openssl11 RPM if not installed
+      become: true
+      ansible.builtin.command:
+        cmd: "dnf install -y compat-openssl11.rpm"
+        chdir: "/tmp"
+      register: openssl_install_result
+      changed_when: openssl_install_result.rc == 0
 
 # Note extract packages from install script
 - name: Extract installation lines from script
@@ -28,23 +40,6 @@
   changed_when: false
   register: rpm_packages
 
-# Note manual creation due to rpm pre-script preventing install on centosstream9
-- name: Ensure adsklic group exists
-  become: true
-  ansible.builtin.group:
-    name: adsklic
-    system: true
-
-- name: Ensure adsklic user exists
-  become: true
-  ansible.builtin.user:
-    name: adsklic
-    group: adsklic
-    system: true
-    home: /opt/Autodesk/AdskLicensing
-    shell: /sbin/nologin
-    create_home: false
-
 - name: Install packages  # noqa: command-instead-of-module
   become: true
   loop: "{{ rpm_packages.stdout_lines }}"
@@ -52,36 +47,14 @@
     loop_var: package
   # Note install flags required on fedora43
   ansible.builtin.command:
-    cmd: rpm -i --noscripts --nodigest --nosignature {{ package }}
+    cmd: rpm -i --nodigest --nosignature {{ package }}
     chdir: "{{ maya_tmp_package_path }}/{{ license_manager_package_sub_dir }}"
     creates: "{{ license_manager_install_dir }}/{{ maya_license_manager_version }}/AdskLicensingService"
   register: license_manager_install_result
   # failed_when: '"installation failed." in license_manager_install_result.stderr'
   changed_when: license_manager_install_result.rc == 0
 
-- name: Create symlink for AdskLicensingService
-  become: true
-  ansible.builtin.file:
-    src: "{{ license_manager_install_dir }}/{{ maya_license_manager_version }}/AdskLicensingService/AdskLicensingService"
-    dest: /usr/bin/AdskLicensingService
-    state: link
-
-- name: Place adsklicensing service in target directory
-  become: true
-  ansible.builtin.copy:
-    src: "{{ license_manager_install_dir }}/{{ maya_license_manager_version }}/AdskLicensingService/adsklicensing.el7.service"
-    dest: /usr/lib/systemd/system/adsklicensing.service
-    mode: '0644'
-    remote_src: true
-
-- name: Set adsklicensing permissions and ownership
-  become: true
-  ansible.builtin.file:
-    path: "/var/opt/Autodesk/AdskLicensingService"
-    owner: adsklic
-    group: adsklic
-    mode: "0755"
-    recurse: true
+# TODO get this working too /usr/lib/systemd/system/adskaccessservicehost.service
 
 - name: Remove installer packages
   become: true

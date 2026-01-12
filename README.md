@@ -4,7 +4,6 @@ The role gets tested for these distributions:
 
 - AlmaLinux9
 - Rocky9
-- CenOSStream9
 - Fedora43
 
 CI in GitHub hosted runners doesn't seem to work due to insufficient storage space for a fully extracted Maya installation setup.

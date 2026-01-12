@@ -23,16 +23,17 @@
   ansible.builtin.set_fact:
     maya_package_map: "{{ xml_result.matches[0]['{' ~ xml_result.actions.namespaces._ ~ '}InstallFile'] }}"
 
+# Note dnf5 prevents module based installs from urls due NEVRA parsing error
 - name: Install maya package
   become: true
-  ansible.builtin.dnf:
-    # Note dnf 4 backend prevents NEVRA parsing error
-    # libdnf5.exception.RpmNevraIncorrectInputError: Invalid character '/' in NEVRA string
-    name: "{{ maya_tmp_package_path }}/{{ maya_package_map.file }}"
-    state: "present"
-    disable_gpg_check: true
+  when: maya_package_name not in ansible_facts.packages
+  ansible.builtin.command:
+    cmd: "dnf install -y {{ maya_package_map.file }}"
+    chdir: "{{ maya_tmp_package_path }}"
+  register: maya_install_result
+  changed_when: maya_install_result.rc == 0
 
-# INFO required for headless usage
+# Note required for headless usage
 - name: Symlink libffi version 6
   when: ansible_facts.os_family | lower == "redhat"
   become: true
