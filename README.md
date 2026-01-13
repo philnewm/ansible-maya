@@ -1,13 +1,6 @@
 # Maya-Role
 
-The role gets tested for these distributions:
-
-- AlmaLinux9
-- Rocky9
-- Fedora43
-
-CI in GitHub hosted runners doesn't seem to work due to insufficient storage space for a fully extracted Maya installation setup.
-Molecule testing therefore only runs locally.
+[![Alma9-CI](https://github.com/philnewm/ansible-maya/actions/workflows/alma9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-maya/actions/workflows/alma9-ci-caller.yml) [![Rocky9-CI](https://github.com/philnewm/ansible-maya/actions/workflows/rocky9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-maya/actions/workflows/rocky9-ci-caller.yml) [![Fedora43-CI](https://github.com/philnewm/ansible-maya/actions/workflows/fedora43-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-maya/actions/workflows/fedora43-ci-caller.yml)
 
 Role description
 
