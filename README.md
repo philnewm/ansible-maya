@@ -1,6 +1,6 @@
 # Maya-Role
 
-[![Alma9-CI](https://github.com/philnewm/ansible-maya/actions/workflows/alma9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-maya/actions/workflows/alma9-ci-caller.yml) [![Rocky9-CI](https://github.com/philnewm/ansible-maya/actions/workflows/rocky9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-maya/actions/workflows/rocky9-ci-caller.yml) [![Fedora43-CI](https://github.com/philnewm/ansible-maya/actions/workflows/fedora43-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-maya/actions/workflows/fedora43-ci-caller.yml)
+[![AlmaLinux9-CI](https://github.com/philnewm/ansible-maya/actions/workflows/almalinux9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-maya/actions/workflows/almalinux9-ci-caller.yml) [![Rocky9-CI](https://github.com/philnewm/ansible-maya/actions/workflows/rocky9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-maya/actions/workflows/rocky9-ci-caller.yml) [![Fedora43-CI](https://github.com/philnewm/ansible-maya/actions/workflows/fedora43-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-maya/actions/workflows/fedora43-ci-caller.yml)
 
 Role description
 
