@@ -52,14 +52,6 @@
           ansible.builtin.include_tasks:
             file: adsk_licensing_install.yml
 
-    - name: Enable and start adsklicensing service
-      when: license_manager
-      become: true
-      ansible.builtin.systemd:
-        name: adsklicensing.service
-        enabled: true
-        state: started
-        daemon_reload: true
 
 - name: Install task dependencies
   become: true
