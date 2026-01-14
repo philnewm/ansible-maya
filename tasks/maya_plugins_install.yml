@@ -13,6 +13,8 @@
   ansible.builtin.set_fact:
     maya_package_attr: "{{ xml_result.matches[0]['{' ~ xml_result.actions.namespaces._ ~ '}InstallFile'] }}"
 
+# Warning arnold seems to write into user home
+# /home/ansible/maya/RSTemplates/
 - name: "Install maya plugin package {{ maya_plugin_package }}"
   become: true
   ansible.builtin.command:

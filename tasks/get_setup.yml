@@ -21,7 +21,10 @@
     url: "{{ installer_url }}"
     dest: "{{ maya_tmp_package_path }}"
     mode: "0755"
-    timeout: 300
+  register: maya_dowload_result
+  retries: 3
+  delay: 2
+  until: maya_dowload_result is succeeded
 
 - name: Run controller download
   when: not extracted_host.stat.exists and maya_controller_download
