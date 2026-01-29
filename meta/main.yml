@@ -13,5 +13,9 @@ galaxy_info:
     - name: "Fedora"
       versions:
         - "43"
-  galaxy_tags: []
+  galaxy_tags:
+    - maya
+    - autodesk
+    - arnold
+    - bifrost
 dependencies: []
