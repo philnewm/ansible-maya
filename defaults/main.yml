@@ -22,7 +22,7 @@ license_manager_install_dir: "/opt/Autodesk/AdskLicensing"
 license_manager_package_sub_dir: "adsklicensinginstaller"
 license_manager_installer_url: "{{ maya_license_manager_setups[maya_license_manager_version] }}"
 
-xml_namespace: https://emsfs.autodesk.com/schema/manifest/1/0
+maya_xml_namespace: https://emsfs.autodesk.com/schema/manifest/1/0
 maya_plugin_packages:
   - "MayaUSD"
   - "Bifrost"
@@ -36,5 +36,23 @@ maya_asset_libs:
   - "{{ maya_install_dir }}/presets"
   - "{{ maya_install_dir }}/brushImages"
   - "{{ maya_install_dir }}/brushShapes"
+
+maya_include_user_config: true
+maya_user_config: "/etc/skel/maya/{{ maya_version_major }}"
+maya_env:
+  "MAYA_DISABLE_CIP": 1
+  "MAYA_DISABLE_CER": 1
+  "MAYA_SKIP_USERSETUP": 1
+  "MAYA_NO_INITIAL_AUTOLOAD_MT": 1
+  "MAYA_OFFSCREEN_HRB": 1
+  "MAYA_RENDER_DESC_PATH": "_"
+  "MAYA_MODULE_PATH": "_"
+  "MAYA_PLUG_IN_PATH": "_"
+
+maya_pipeline_dev: true
+maya_venv_path: "/etc/skel/python_venv/maya_venv"
+maya_python_modules:
+  - maya-stubs
+  - pymel
 
 ...

@@ -6,7 +6,7 @@
     xpath: "/_:Package/_:Configuration/_:InstallFile"
     content: attribute
     namespaces:
-      _: "{{ xml_namespace }}"
+      _: "{{ maya_xml_namespace }}"
   register: xml_result
 
 - name: Get package attributes from xml results

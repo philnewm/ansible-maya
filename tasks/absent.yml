@@ -35,4 +35,18 @@
     path: "{{ item }}"
     state: "absent"
 
+- name: Remove maya user config
+  become: true
+  when: maya_include_user_config
+  ansible.builtin.file:
+    path: "{{ maya_user_config }}"
+    state: "absent"
+
+- name: Remove maya user venv
+  become: true
+  when: maya_pipeline_dev
+  ansible.builtin.file:
+    path: "{{ maya_venv_path }}"
+    state: "absent"
+
 ...

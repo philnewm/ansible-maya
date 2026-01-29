@@ -1,0 +1,33 @@
+---
+
+- name: Ensure user script dir exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ maya_user_config }}/scripts"
+    state: "directory"
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Write user setup
+  become: true
+  ansible.builtin.copy:
+    src: userSetup.py
+    dest: "{{ maya_user_config }}/scripts/userSetup.py"
+    owner: root
+    group: root
+    mode: "0744"
+
+- name: Write maya environment
+  become: true
+  ansible.builtin.copy:
+    dest: "{{ maya_user_config }}/Maya.env"
+    content: |
+      {% for key, value in maya_env.items() %}
+      {{ key }}={{ value }}
+      {% endfor %}
+    owner: root
+    group: root
+    mode: "0644"
+
+...

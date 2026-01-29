@@ -115,4 +115,14 @@
     path: "{{ item }}"
     state: "absent"
 
+- name: Configure maya
+  when: maya_include_user_config
+  ansible.builtin.include_tasks:
+    file: user_config.yml
+
+- name: Setup maya dev env
+  when: maya_pipeline_dev
+  ansible.builtin.include_tasks:
+    file: development_setup.yml
+
 ...

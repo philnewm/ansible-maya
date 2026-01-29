@@ -1,0 +1,43 @@
+---
+
+- name: Install pip module dependency
+  become: true
+  ansible.builtin.package:
+    name:
+      - python3-packaging
+      - python3-setuptools
+    state: present
+
+- name: Ensure maya dev virtualenv exists with latest pip
+  become: true
+  ansible.builtin.pip:
+    name: pip
+    state: latest
+    virtualenv: "{{ maya_venv_path }}"
+    virtualenv_command: "{{ maya_install_dir }}/bin/mayapy -m venv"
+
+- name: Install maya dev packages
+  become: true
+  loop: "{{ maya_python_modules }}"
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    virtualenv: "{{ maya_venv_path }}"
+
+- name: Get python version
+  become: true
+  ansible.builtin.command:
+    cmd: "{{ maya_install_dir }}/bin/mayapy -c \"import sys; print(f'python{sys.version_info.major}.{sys.version_info.minor}')\""
+  changed_when: false
+  register: mayapy_version
+
+- name: Create path link to maya install packages
+  become: true
+  ansible.builtin.copy:
+    content: |
+      {{ maya_install_dir }}/lib/{{ mayapy_version.stdout }}/site-packages
+    dest: "{{ maya_venv_path }}/lib/{{ mayapy_version.stdout }}/site-packages/maya_path.pth"
+    owner: root
+    group: root
+    mode: "0755"
+
+...
