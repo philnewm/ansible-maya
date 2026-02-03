@@ -55,9 +55,8 @@
 
 - name: Install task dependencies
   become: true
-  loop: "{{ task_dependencies }}"
   ansible.builtin.package:
-    name: "{{ item }}"
+    name: "{{ task_dependencies }}"
     state: "present"
 
 - name: Handle Maya install

@@ -2,12 +2,8 @@
 
 - name: Install licensing dependencies
   become: true
-  when: adsk_licensing_dependency not in ansible_facts.packages
-  loop: "{{ adsk_licensing_dependencies[ansible_facts.distribution | lower] | flatten(1) }}"
-  loop_control:
-    loop_var: adsk_licensing_dependency
   ansible.builtin.package:
-    name: "{{ adsk_licensing_dependency }}"
+    name: "{{ adsk_licensing_dependencies[ansible_facts.distribution | lower] | flatten(1) }}"
 
 # Note dnf5 prevents module based installs from urls due NEVRA parsing error
 - name: Install openssl11 on fedora usign almalinux9 repo
@@ -51,10 +47,7 @@
     chdir: "{{ maya_tmp_package_path }}/{{ license_manager_package_sub_dir }}"
     creates: "{{ license_manager_install_dir }}/{{ maya_license_manager_version }}/AdskLicensingService"
   register: license_manager_install_result
-  # failed_when: '"installation failed." in license_manager_install_result.stderr'
   changed_when: license_manager_install_result.rc == 0
-
-# TODO get this working too /usr/lib/systemd/system/adskaccessservicehost.service
 
 - name: Remove installer packages
   become: true

@@ -2,12 +2,8 @@
 
 - name: Install dependencies
   become: true
-  when: maya_dependency not in ansible_facts.packages
-  loop: "{{ maya_dependencies[maya_version] | flatten(1) }}"
-  loop_control:
-    loop_var: maya_dependency
   ansible.builtin.package:
-    name: "{{ maya_dependency }}"
+    name: "{{ maya_dependencies[maya_version] | flatten(1) }}"
     state: "present"
 
 - name: Get packages from xml
