@@ -1,7 +1,13 @@
 ---
 
 - name: "Desired state is {{ state }}"
+  when: ansible_facts.os_family | lower == "redhat"
   ansible.builtin.include_tasks:
     file: "{{ state }}.yml"
+
+- name: "Debian systems not supported"
+  when: ansible_facts.os_family | lower == "debian"
+  ansible.builtin.debug:
+    msg: "Debian based systems like {{ ansible_facts.distribution }} are not supported by this role."
 
 ...
